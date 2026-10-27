@@ -133,10 +133,13 @@ h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.t
 @media(prefers-reduced-motion:reduce){.button,.upgrade{transition:none!important}.toast,.float{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 
-/* Explicitly separate the interactive WebGL layer from the HUD stacking context. */
-#worldCanvas{position:fixed;inset:0;z-index:0!important;pointer-events:auto}
-#hud{position:fixed;inset:0;z-index:2147483646!important;isolation:isolate;pointer-events:none}
-#hudSettings{position:fixed;z-index:2147483647!important;pointer-events:auto}
+/* Keep the WebGL canvas below the complete HUD hit-testing layer. The HUD itself
+   stays click-through so only actual controls intercept pointer input. */
+#worldCanvas{position:fixed!important;inset:0!important;z-index:0!important;pointer-events:auto!important}
+#hud{position:fixed!important;inset:0!important;z-index:100!important;isolation:isolate;pointer-events:none!important}
+#hudSettings{position:fixed!important;z-index:101!important;pointer-events:auto!important;touch-action:manipulation}
+#hud .ability-btn{position:relative;z-index:101;pointer-events:auto!important}
+#hud button,#hud a,#hud input,#hud select{pointer-events:auto}
 </style></head><body>
 <div id="hud"><button id="hudSettings">⚙ Settings</button><div id="vignette"></div><div id="top">
 <div class="stat"><small>Coins collected</small><strong id="collected">0 / 1,500,000</strong></div>
