@@ -34,8 +34,8 @@ h1{margin:0 0 8px;font-size:clamp(30px,5vw,48px);line-height:1.05}h2{margin:0 0 
 .upgrade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
 .path{background:#0b1422;border:1px solid #ffffff22;border-radius:14px;padding:12px}.path h3{margin:0 0 6px;font-size:16px}.perk{font-size:12px;color:#ffdb69;margin:2px 0 8px;line-height:1.4}
 .upgrade{width:100%;text-align:left;background:#25364c;color:#fff;border:1px solid #ffffff1b;border-radius:9px;padding:10px;margin:5px 0;cursor:pointer}.upgrade:disabled{opacity:.4;cursor:not-allowed}.upgrade b{display:block}.upgrade small{color:#b9c7d8}
-#abilityBar{position:fixed;left:16px;bottom:140px;display:grid;grid-template-columns:repeat(3,minmax(130px,175px));gap:7px;pointer-events:auto;max-width:calc(100vw - 190px);z-index:4}
-.ability-btn{background:linear-gradient(145deg,#18283bdf,#0b1422ef);border:1px solid #ffffff36;border-radius:10px;color:#fff;padding:8px 10px;text-align:left;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 5px 18px #0005;min-width:0}
+#abilityBar{position:fixed;left:16px;bottom:140px;display:grid;grid-template-columns:repeat(3,minmax(130px,175px));gap:7px;pointer-events:none;max-width:calc(100vw - 190px);z-index:1}
+.ability-btn{pointer-events:auto;background:linear-gradient(145deg,#18283bdf,#0b1422ef);border:1px solid #ffffff36;border-radius:10px;color:#fff;padding:8px 10px;text-align:left;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 5px 18px #0005;min-width:0}
 .ability-btn b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ability-btn small{display:block;color:#c4d2e3;font-size:10px;margin-top:2px}.ability-btn:disabled{opacity:.55;cursor:default}.ability-btn.ready{border-color:#ffdb69;box-shadow:0 0 16px #ffbd4540}.ability-btn .cooldown{color:#ffd56a}
 #abilityFlash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:3;background:radial-gradient(circle at center,#fff4a533,transparent 60%)}#abilityFlash.pulse{animation:abilityPulse .55s ease-out}
 @keyframes abilityPulse{0%{opacity:1}100%{opacity:0}}
