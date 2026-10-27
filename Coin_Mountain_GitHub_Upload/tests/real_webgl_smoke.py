@@ -50,7 +50,7 @@ try:
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
         # SwiftShader is a software renderer in CI; use Medium to test the real scene without benchmarking software shadows.
-        page.add_init_script("localStorage.setItem('coinSettings', JSON.stringify({quality:'medium'}))")
+        page.add_init_script("try { if (location.origin !== 'null') localStorage.setItem('coinSettings', JSON.stringify({quality:'medium'})); } catch (e) {}")
         page.goto(url, wait_until='networkidle', timeout=45000)
         page.wait_for_timeout(2500)
 
