@@ -80,12 +80,12 @@ function buildPile(){
  coinGroup=new THREE.Group();coinGroup.position.y=BASE_TOP;scene.add(coinGroup);
  coreMat=new THREE.MeshStandardMaterial({color:0xc98f14,roughness:.4,metalness:.5});
  core=new THREE.Mesh(new THREE.BufferGeometry(),coreMat);core.castShadow=true;core.receiveShadow=true;coinGroup.add(core);
- const coinGeo=new THREE.CylinderGeometry(.235,.235,.09,24,1);
+ const coinGeo=new THREE.CylinderGeometry(.235,.235,.09,16,1);
  // Fine milled rims and raised mint marks give the pile a deliberate collectible silhouette.
- const coinRimGeo=new THREE.TorusGeometry(.164,.012,5,20);
+ const coinRimGeo=new THREE.TorusGeometry(.164,.012,3,10);
  const coinRimMat=new THREE.MeshStandardMaterial({color:0xffef9b,roughness:.24,metalness:.88,emissive:0x6e4200,emissiveIntensity:.08});
  coinRims=new THREE.InstancedMesh(coinRimGeo,coinRimMat,COIN_COUNT);coinRims.count=0;coinRims.castShadow=false;coinRims.receiveShadow=false;coinRims.frustumCulled=false;
- const coinMarkGeo=new THREE.CylinderGeometry(.045,.045,.012,12);
+ const coinMarkGeo=new THREE.CylinderGeometry(.045,.045,.012,8);
  const coinMarkMat=new THREE.MeshStandardMaterial({color:0xffe58b,roughness:.25,metalness:.8});
  coinMarks=new THREE.InstancedMesh(coinMarkGeo,coinMarkMat,COIN_COUNT);coinMarks.count=0;coinMarks.frustumCulled=false;
  coinMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.34,metalness:.42,emissive:0xffa000,emissiveIntensity:.16});
@@ -98,14 +98,15 @@ function buildPile(){
   list.push({x:Math.cos(ang)*rad,y,z:Math.sin(ang)*rad,rx:(Math.random()-.5)*.18,ry:Math.random()*Math.PI,rz:(Math.random()-.5)*.18,s:.75+Math.random()*.5,c:Math.floor(Math.random()*4)});
  }
  list.sort((a,b)=>a.y-b.y);coinYs=list.map(o=>o.y);pileYMax=coinYs[COIN_COUNT-1];
- const temp=new THREE.Object3D();
+ const temp=new THREE.Object3D();let rimIdx=0,markIdx=0;
  list.forEach((o,i)=>{temp.position.set(o.x,o.y,o.z);temp.rotation.set(o.rx,o.ry,o.rz);temp.scale.set(o.s,1,o.s);temp.updateMatrix();inst.setMatrixAt(i,temp.matrix);inst.setColorAt(i,palette[o.c]);
   // Fine concentric milling and a raised center stamp on every coin; low-overhead instancing.
-  const d=new THREE.Object3D();d.position.set(o.x,o.y+.047*o.s,o.z);d.rotation.set(-Math.PI/2, o.ry, 0);d.scale.setScalar(o.s);d.updateMatrix();coinRims.setMatrixAt(i,d.matrix);
-  d.position.set(o.x,o.y+.052*o.s,o.z);d.rotation.set(0,o.ry,0);d.scale.set(o.s,1,o.s);d.updateMatrix();coinMarks.setMatrixAt(i,d.matrix);
+  const d=new THREE.Object3D();
+  if(i%2===0){d.position.set(o.x,o.y+.047*o.s,o.z);d.rotation.set(-Math.PI/2,o.ry,0);d.scale.setScalar(o.s);d.updateMatrix();coinRims.setMatrixAt(rimIdx++,d.matrix)}
+  if(i%3===0){d.position.set(o.x,o.y+.052*o.s,o.z);d.rotation.set(0,o.ry,0);d.scale.set(o.s,1,o.s);d.updateMatrix();coinMarks.setMatrixAt(markIdx++,d.matrix)}
  });
- inst.instanceMatrix.needsUpdate=true;if(inst.instanceColor)inst.instanceColor.needsUpdate=true;coinRims.count=COIN_COUNT;coinMarks.count=COIN_COUNT;coinRims.instanceMatrix.needsUpdate=true;coinMarks.instanceMatrix.needsUpdate=true;coinGroup.add(inst,coinRims,coinMarks);
- for(let i=0;i<180;i++){const a=Math.random()*Math.PI*2,r=19.6+Math.random()*4;const c=new THREE.Mesh(coinGeo,mat(Math.random()>.5?0xffc928:0xffe58b,.3,.5));c.position.set(Math.cos(a)*r,.06,Math.sin(a)*r);c.rotation.set((Math.random()-.5)*.1,Math.random()*Math.PI,0);c.scale.set(.8,.8,.8);c.castShadow=true;scene.add(c)}
+ inst.instanceMatrix.needsUpdate=true;if(inst.instanceColor)inst.instanceColor.needsUpdate=true;coinRims.count=rimIdx;coinMarks.count=markIdx;coinRims.instanceMatrix.needsUpdate=true;coinMarks.instanceMatrix.needsUpdate=true;coinGroup.add(inst,coinRims,coinMarks);
+ for(let i=0;i<180;i++){const a=Math.random()*Math.PI*2,r=19.6+Math.random()*4;const c=new THREE.Mesh(coinGeo,mat(Math.random()>.5?0xffc928:0xffe58b,.3,.5));c.position.set(Math.cos(a)*r,.06,Math.sin(a)*r);c.rotation.set((Math.random()-.5)*.1,Math.random()*Math.PI,0);c.scale.set(.8,.8,.8);c.castShadow=false;scene.add(c)}
  updatePileShape(true);
 }
 // The mountain really erodes: coins are sorted by height, so the highest ones disappear first.
@@ -113,7 +114,7 @@ function updatePileShape(force){
  const frac=1-collected/TOTAL,step=Math.round(frac*400);
  if(!force&&step===lastPileStep)return;lastPileStep=step;
  const h=pileYMax*frac;let lo=0,hi=COIN_COUNT;while(lo<hi){const mid=(lo+hi)>>1;if(coinYs[mid]<=h)lo=mid+1;else hi=mid}
- inst.count=lo;coinRims.count=lo;coinMarks.count=lo;pileH=h;
+ inst.count=lo;coinRims.count=Math.ceil(lo/2);coinMarks.count=Math.ceil(lo/3);pileH=h;
  const hc=h>.25?Math.min(CORE_H,h-.15):0;core.visible=hc>.05;
  if(hc>.05){core.geometry.dispose();core.geometry=new THREE.CylinderGeometry(CORE_R*(1-hc/CORE_H),CORE_R,hc,48);core.position.y=hc/2}
 }
