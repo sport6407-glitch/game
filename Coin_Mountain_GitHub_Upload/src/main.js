@@ -696,7 +696,8 @@ function setupInput(){
  canvas.addEventListener('pointermove',e=>{if(e.pointerId!==dragId||locked||!isPlaying())return;const dx=e.clientX-dragLastX,dy=e.clientY-dragLastY;dragLastX=e.clientX;dragLastY=e.clientY;dragMoved+=Math.abs(dx)+Math.abs(dy);look(dx,dy)});
  const endDrag=e=>{if(e.pointerId!==dragId)return;const wasClick=e.type==='pointerup'&&dragMoved<6;dragId=null;try{canvas.releasePointerCapture(e.pointerId)}catch(err){}if(wasClick&&isPlaying()&&!locked)requestLock()};
  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
- $('start').onclick=()=>{ensureAudio();$('menu').classList.add('hidden');requestLock()};
+ // Always enter gameplay when Start is activated; pointer lock is optional and can be denied by browsers.
+ $('start').addEventListener('click',e=>{e.preventDefault();ensureAudio();$('menu').classList.add('hidden');lockBlocked=false;requestLock();if(!locked)$('lookHint').classList.remove('hidden')});
  $('openSettings').onclick=()=>openSettings(true);$('hudSettings').onclick=()=>openSettings(false);$('closeSettings').onclick=closeSettings;
  $('defaultsSettings').onclick=()=>{binds={...defaultBinds};masterVolume=.7;sfxVolume=.8;ambVolume=.5;mouseSensitivity=1;invertY=false;headBob=true;showHints=true;quality='high';baseFov=75;pushSettingsToUI();applyQuality();applyVolumes();saveSettings();syncSettingsUI();renderBinds()};
  ['masterVolume','sfxVolume','ambVolume','sensitivity','fov','invertY','headBob','showHints','quality'].forEach(id=>$(id).addEventListener('input',()=>{readSettingsUI();applyQuality();applyVolumes();syncSettingsUI();saveSettings()}));
