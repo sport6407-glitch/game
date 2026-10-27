@@ -115,7 +115,7 @@ function updatePileShape(force){
  const frac=1-collected/TOTAL,step=Math.round(frac*400);
  if(!force&&step===lastPileStep)return;lastPileStep=step;
  const h=pileYMax*frac;let lo=0,hi=COIN_COUNT;while(lo<hi){const mid=(lo+hi)>>1;if(coinYs[mid]<=h)lo=mid+1;else hi=mid}
- inst.count=lo;coinRims.count=Math.ceil(lo/2);coinMarks.count=Math.ceil(lo/3);pileH=h;
+ const visibleCap=QA_MODE?2500:COIN_COUNT;inst.count=Math.min(lo,visibleCap);coinRims.count=Math.min(Math.ceil(lo/2),Math.ceil(visibleCap/2));coinMarks.count=Math.min(Math.ceil(lo/3),Math.ceil(visibleCap/3));pileH=h;
  const hc=h>.25?Math.min(CORE_H,h-.15):0;core.visible=hc>.05;
  if(hc>.05){core.geometry.dispose();core.geometry=new THREE.CylinderGeometry(CORE_R*(1-hc/CORE_H),CORE_R,hc,48);core.position.y=hc/2}
 }
