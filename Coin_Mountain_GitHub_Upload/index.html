@@ -132,6 +132,10 @@ h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.t
 .toast{box-shadow:0 12px 36px rgba(0,0,0,.38),0 0 28px rgba(255,205,95,.1)}
 @media(prefers-reduced-motion:reduce){.button,.upgrade{transition:none!important}.toast,.float{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
+
+/* Keep the WebGL surface behind clickable HUD controls while leaving the minimap in normal UI flow. */
+#worldCanvas{position:fixed;inset:0;z-index:0}
+#hud{z-index:2}
 </style></head><body>
 <button id="hudSettings">⚙ Settings</button>
 <div id="hud"><div id="vignette"></div><div id="top">
