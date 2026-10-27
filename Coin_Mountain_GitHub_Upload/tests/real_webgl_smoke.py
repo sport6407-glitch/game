@@ -49,7 +49,7 @@ try:
         page = browser.new_page(viewport={'width': 1440, 'height': 900}, device_scale_factor=1)
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
-        page.goto(url, wait_until='networkidle', timeout=45000)
+        # SwiftShader is a software renderer in CI; use Medium to test the real scene without benchmarking software shadows.\n        page.add_init_script(\"localStorage.setItem('coinSettings', JSON.stringify({quality:'medium'}))\")\n        page.goto(url, wait_until='networkidle', timeout=45000)
         page.wait_for_timeout(2500)
 
         metrics['title'] = page.title()
@@ -71,6 +71,37 @@ try:
         capture_screenshot(page, OUT / 'real-webgl-gameplay.png')
         if not metrics['menuHiddenAfterStart']:
             raise RuntimeError('Start button did not dismiss the main menu')
+
+        # Exercise the live movement + collection loop in the actual bundled game.
+        before_coins = page.locator('#collected').inner_text()
+        page.keyboard.down('w')
+        page.wait_for_timeout(1350)
+        page.keyboard.up('w')
+        page.keyboard.down('e')
+        page.wait_for_timeout(1800)
+        page.keyboard.up('e')
+        page.wait_for_timeout(250)
+        after_coins = page.locator('#collected').inner_text()
+        metrics['collectionBefore'] = before_coins
+        metrics['collectionAfter'] = after_coins
+        if after_coins == before_coins:
+            raise RuntimeError('Holding W to approach the mountain and E to collect did not change the coin counter')
+
+        # Verify the settings overlay remains reachable and responsive after starting a run.
+        page.locator('#hudSettings').click()
+        metrics['settingsOpensInGameplay'] = page.locator('#settings').is_visible()
+        if not metrics['settingsOpensInGameplay']:
+            raise RuntimeError('HUD settings button did not open settings during gameplay')
+        page.locator('#closeSettings').click()
+        metrics['settingsCloses'] = not page.locator('#settings').is_visible()
+        if not metrics['settingsCloses']:
+            raise RuntimeError('Settings close button did not close the overlay')
+        page.set_viewport_size({'width': 390, 'height': 844})
+        page.wait_for_timeout(150)
+        metrics['mobileCanvasVisible'] = page.locator('canvas').first.is_visible()
+        if not metrics['mobileCanvasVisible']:
+            raise RuntimeError('Renderer canvas disappeared at mobile viewport size')
+        page.set_viewport_size({'width': 1440, 'height': 900})
 
         metrics['rafFps'] = page.evaluate(
             "async()=>{let n=0;let start=performance.now();return await new Promise(resolve=>{function f(t){n++;if(t-start>=2500)resolve({frames:n,elapsedMs:Math.round(t-start),fps:Math.round(n*1000/(t-start)*10)/10});else requestAnimationFrame(f)}requestAnimationFrame(f)})}"
