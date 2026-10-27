@@ -710,7 +710,7 @@ function init(){
  scene=new THREE.Scene();scene.background=new THREE.Color(daySky);scene.fog=new THREE.Fog(daySky.getHex(),64,188);
  camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,320);camera.rotation.order='YXZ';
  renderer=new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
- canvas=renderer.domElement;document.body.prepend(canvas);clock=new THREE.Clock();
+ canvas=renderer.domElement;canvas.id='worldCanvas';document.body.prepend(canvas);clock=new THREE.Clock();
  hemi=new THREE.HemisphereLight(0xc9e7ff,0x55402b,1.65);scene.add(hemi);
  const fill=new THREE.DirectionalLight(0x83b6c8,.72);fill.position.set(24,18,-22);scene.add(fill);
  const rimFill=new THREE.DirectionalLight(0xffc76b,.48);rimFill.position.set(4,12,26);scene.add(rimFill);
