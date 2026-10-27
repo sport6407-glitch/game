@@ -51,7 +51,7 @@ try:
         page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
         # SwiftShader is a software renderer in CI; use Low to exercise the real scene without software-shadow bottlenecks.
         page.add_init_script("try { if (location.origin !== 'null') localStorage.setItem('coinSettings', JSON.stringify({quality:'low'})); } catch (e) {}")
-        page.goto(url + '?qa=1', wait_until='networkidle', timeout=45000)
+        page.goto(url, wait_until='networkidle', timeout=45000)
         page.wait_for_timeout(2500)
 
         metrics['title'] = page.title()
@@ -74,7 +74,12 @@ try:
         if not metrics['menuHiddenAfterStart']:
             raise RuntimeError('Start button did not dismiss the main menu')
 
-        # QA-only spawn begins just inside the real collection radius, so this verifies input and economy without requiring software-rendered frames to simulate walking across the whole arena.
+        # Reload into an isolated QA-only scene after capturing screenshots of the full production visuals.
+        page.goto(url + '?qa=1', wait_until='networkidle', timeout=45000)
+        page.wait_for_timeout(500)
+        page.locator('#start').click()
+        page.wait_for_timeout(500)
+        # QA-only spawn begins inside collection range and uses a small render workload for deterministic software-WebGL input checks.
         before_coins = page.locator('#collected').inner_text()
         page.keyboard.down('w')
         page.wait_for_timeout(250)
