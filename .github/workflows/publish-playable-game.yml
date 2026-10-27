@@ -34,6 +34,8 @@ jobs:
         working-directory: Coin_Mountain_GitHub_Upload
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload playable site
         uses: actions/upload-pages-artifact@v3
         with:
