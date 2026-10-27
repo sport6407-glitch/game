@@ -64,11 +64,11 @@ function facingCenter(g,x,z){g.position.set(x,BASE_TOP,z);g.rotation.y=Math.atan
 
 // ---------- world building ----------
 function buildGround(){
- grassMat=new THREE.MeshStandardMaterial({color:biomes[0].grass,map:noiseTexture('#9cae8c',9000,54),roughness:.96});
+ grassMat=new THREE.MeshStandardMaterial({color:biomes[0].grass,map:noiseTexture('#9cae8c',9000,28),roughness:.98});
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(420,420),grassMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
- const dirt=new THREE.MeshStandardMaterial({color:0x79563d,map:noiseTexture('#d0d0d0',2500,5),roughness:1});
+ const rockTexture=noiseTexture('#a5aaa1',6200,4.5);const dirt=new THREE.MeshStandardMaterial({color:0x515d59,map:rockTexture,bumpMap:rockTexture,bumpScale:.18,roughness:.98,metalness:.02});
  const base=new THREE.Mesh(new THREE.CylinderGeometry(17,19,BASE_TOP,64),dirt);base.position.set(0,BASE_TOP/2,0);base.castShadow=true;base.receiveShadow=true;scene.add(base);
- const pathMat=new THREE.MeshStandardMaterial({color:0x8d6a48,map:noiseTexture('#cfcfcf',2500,2),roughness:1,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+ const pathTexture=noiseTexture('#a0a49b',4200,2);const pathMat=new THREE.MeshStandardMaterial({color:0x66706c,map:pathTexture,bumpMap:pathTexture,bumpScale:.08,roughness:.98,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
  const trail=new THREE.Mesh(new THREE.PlaneGeometry(5,26),pathMat);trail.rotation.x=-Math.PI/2;trail.position.set(0,.025,31);trail.receiveShadow=true;scene.add(trail);
  // Surveyor's inlaid brass rings frame the excavation site and anchor the composition.
  const inlayMat=new THREE.MeshStandardMaterial({color:0x9a7133,roughness:.42,metalness:.72,emissive:0x241504,emissiveIntensity:.12});
@@ -88,7 +88,7 @@ function buildPile(){
  const coinMarkGeo=new THREE.CylinderGeometry(.045,.045,.012,12);
  const coinMarkMat=new THREE.MeshStandardMaterial({color:0xffe58b,roughness:.25,metalness:.8});
  coinMarks=new THREE.InstancedMesh(coinMarkGeo,coinMarkMat,COIN_COUNT);coinMarks.count=0;coinMarks.frustumCulled=false;
- coinMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.22,metalness:.82,emissive:0xffa000,emissiveIntensity:.08});
+ coinMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.34,metalness:.42,emissive:0xffa000,emissiveIntensity:.16});
  inst=new THREE.InstancedMesh(coinGeo,coinMat,COIN_COUNT);inst.castShadow=false;inst.receiveShadow=false;inst.frustumCulled=false;
  const palette=[0xffd447,0xffc928,0xe9a91b,0xffe27b].map(c=>new THREE.Color(c));
  const list=[];
@@ -360,7 +360,7 @@ function makeDrone(i){
 }
 function syncDrones(){while(drones.length<droneCount)drones.push(makeDrone(drones.length));while(drones.length>droneCount){const d=drones.pop();droneGroup.remove(d.grp)}}
 function buildRigs(){
- handGroup=new THREE.Group();handGroup.scale.setScalar(.74);camera.add(handGroup);scene.add(camera);
+ handGroup=new THREE.Group();handGroup.scale.setScalar(.55);camera.add(handGroup);scene.add(camera);
  const skin=mat(0xd9a477),sleeveM=mat(0x294d70);
  const lS=new THREE.Mesh(new THREE.BoxGeometry(.28,.42,.32),sleeveM);lS.position.set(-.38,-.4,-.65);handGroup.add(lS);const lH=new THREE.Mesh(new THREE.SphereGeometry(.14,16,12),skin);lH.position.set(-.38,-.27,-.78);handGroup.add(lH);
  const rS=new THREE.Mesh(new THREE.BoxGeometry(.28,.42,.32),sleeveM);rS.position.set(.38,-.4,-.65);handGroup.add(rS);
@@ -790,7 +790,7 @@ function animate(){
  }else{
   handGroup.visible=true;bobAmp+=(((moving&&onGround)?1:0)-bobAmp)*Math.min(1,dt*8);
   camera.position.set(player.x,player.y+(headBob?Math.sin(bobT)*.05*bobAmp:0),player.z);applyCameraRotation();
-  handGroup.position.y=collecting?Math.sin(performance.now()*.025)*.045:Math.sin(bobT*.5)*.012*bobAmp;handGroup.rotation.x=collecting?Math.sin(performance.now()*.018)*.08:0;
+  handGroup.position.y=-.16+(collecting?Math.sin(performance.now()*.025)*.035:Math.sin(bobT*.5)*.01*bobAmp);handGroup.rotation.x=collecting?Math.sin(performance.now()*.018)*.08:0;
  }
  if(Math.abs(camera.fov-fovCur)>.01){camera.fov=fovCur;camera.updateProjectionMatrix()}
  const hx=-Math.sin(yaw)*Math.cos(pitch),hy=Math.sin(pitch),hz=-Math.cos(yaw)*Math.cos(pitch);
