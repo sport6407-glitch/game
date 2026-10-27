@@ -135,7 +135,7 @@ h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.t
 
 /* Keep the WebGL canvas below the complete HUD hit-testing layer. The HUD itself
    stays click-through so only actual controls intercept pointer input. */
-#worldCanvas{position:fixed!important;inset:0!important;z-index:0!important;pointer-events:auto!important}
+#worldCanvas{position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important}
 #hud{position:fixed!important;inset:0!important;z-index:100!important;isolation:isolate;pointer-events:none!important}
 #hudSettings{position:fixed!important;z-index:101!important;pointer-events:auto!important;touch-action:manipulation}
 #hud .ability-btn{position:relative;z-index:101;pointer-events:auto!important}
