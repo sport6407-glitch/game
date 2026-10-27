@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 const TOTAL=1500000,BASE_TOP=2,PILE_RADIUS=15,CORE_R=14.6,CORE_H=7.9,EYE=1.7,COIN_COUNT=12000,MAX_PITCH=1.5,ARENA_R=37,SAVE_KEY='coinMountainSave3',MAX_DRONES=25,DRONE_RATE=.6,CYCLE=480,PILE_MIN_R=15.8;
 // ---------- state ----------
-let scene,camera,renderer,canvas,clock,sun,moon,hemi,pileLight,stars,starsMat,sunMesh,moonMesh,cloudMat,clouds=[];
+let scene,camera,renderer,canvas,clock,sun,moon,hemi,pileLight,stars,starsMat,sunMesh,moonMesh,cloudMat,clouds=[],ambientMotesObj=null;
 let grassMat,hillMats=[],leafMat,coinGroup,core,coreMat,coinMat,inst,coinRims,coinMarks,coinYs=[],pileH=CORE_H,pileYMax=8.3,lastPileStep=-1;
 let handGroup,rigs={},toolMount,props={},droneGroup,drones=[],goldens=[],obstacles=[],particles={};
 let keys={},yaw=0,pitch=0,locked=false,lockBlocked=false,mouseHeld=false,shopOpen=false,settingsOpen=false,settingsFromMenu=false,won=false;
@@ -232,7 +232,7 @@ function buildVisualOverhaul(){
   const c=Math.random()<.72?cA:cB;colors[i*3]=c.r;colors[i*3+1]=c.g;colors[i*3+2]=c.b;
  }
  const motesGeo=new THREE.BufferGeometry();motesGeo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));motesGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
- const motes=new THREE.Points(motesGeo,new THREE.PointsMaterial({size:.095,vertexColors:true,transparent:true,opacity:.72,depthWrite:false,sizeAttenuation:true}));motes.name='ambientMotes';scene.add(motes);
+ const motes=new THREE.Points(motesGeo,new THREE.PointsMaterial({size:.095,vertexColors:true,transparent:true,opacity:.72,depthWrite:false,sizeAttenuation:true}));motes.name='ambientMotes';ambientMotesObj=motes;scene.add(motes);
  // Distinctive luminous inlays reinforce the brass-and-teal art direction at the excavation rim.
  const runeMat=new THREE.MeshStandardMaterial({color:0x64d9cc,roughness:.3,metalness:.55,emissive:0x1b9488,emissiveIntensity:.7});
  for(let i=0;i<32;i++){
@@ -780,7 +780,7 @@ function animate(){
  // ---- visuals ----
  updateSky(dt);
  const tnow=performance.now()*.001;
- const ambientMotes=scene.getObjectByName('ambientMotes');if(ambientMotes){ambientMotes.rotation.y+=dt*.012;ambientMotes.position.y=Math.sin(tnow*.22)*.18;}
+ if(ambientMotesObj){ambientMotesObj.rotation.y+=dt*.012;ambientMotesObj.position.y=Math.sin(tnow*.22)*.18;}
  drones.forEach((d,i)=>{const ang=tnow*(.35+(i%3)*.08)*(i%2?1:-1)+d.phase,rr=10.5+(i%4)*1.5;d.grp.position.set(Math.cos(ang)*rr,BASE_TOP+4.5+(i%5)*1.2+Math.sin(tnow*2+d.phase)*.3,Math.sin(ang)*rr);d.rotor.rotation.y=tnow*40;d.grp.rotation.y=-ang});
  if(props.conv.visible)props.convCoins.forEach((c,i)=>{c.position.x=12+((tnow*1.6+i*.8)%9.6)});
  if(props.loader.visible)props.loaderArm.rotation.z=Math.sin(tnow*1.1)*.35;
