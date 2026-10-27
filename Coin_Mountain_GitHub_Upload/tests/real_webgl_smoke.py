@@ -59,7 +59,7 @@ try:
         metrics['startDisabled'] = page.locator('#start').is_disabled()
         metrics['canvasCount'] = page.locator('canvas').count()
         metrics['canvasInfo'] = page.locator('canvas').first.evaluate(
-            'c => ({width:c.width,height:c.height,clientWidth:c.clientWidth,clientHeight:c.clientHeight,webgl2:!!c.getContext("webgl2"),webgl:!!c.getContext("webgl")})'
+            'c => { const gl2=c.getContext("webgl2"); const gl=gl2 ? null : c.getContext("webgl"); return {width:c.width,height:c.height,clientWidth:c.clientWidth,clientHeight:c.clientHeight,webgl2:!!gl2,webgl:!!gl}; }'
         )
         if metrics['startDisabled']:
             raise RuntimeError('Start button disabled: engine initialization failed')
