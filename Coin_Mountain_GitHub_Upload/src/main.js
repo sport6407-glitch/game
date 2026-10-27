@@ -719,7 +719,7 @@ function init(){
  pileLight=new THREE.PointLight(0xffc94a,0,75,1.2);pileLight.position.set(0,BASE_TOP+9,0);scene.add(pileLight);
  buildGround();buildPile();buildScenery();buildVisualOverhaul();buildSkyObjects();buildProps();buildRigs();buildParticles();
  loadSettings();applyQuality();
- const loaded=loadGame();
+ const loaded=loadGame();if(QA_MODE)rate=20;
  applyBiome();updatePileShape(true);syncDrones();refreshProps();updateToolVisuals();
  player.y=floorAt(player.x,player.z);camera.position.set(player.x,player.y,player.z);applyCameraRotation();
  setupInput();makeShop();renderAbilities();syncSettingsUI();renderBinds();updateHUD();refreshMenu();
