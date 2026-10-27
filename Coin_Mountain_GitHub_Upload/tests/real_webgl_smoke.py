@@ -46,11 +46,11 @@ try:
             '--use-gl=angle', '--use-angle=swiftshader',
             '--enable-unsafe-swiftshader'
         ])
-        page = browser.new_page(viewport={'width': 1440, 'height': 900}, device_scale_factor=1)
+        page = browser.new_page(viewport={'width': 1280, 'height': 720}, device_scale_factor=1)
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
-        # SwiftShader is a software renderer in CI; use Medium to test the real scene without benchmarking software shadows.
-        page.add_init_script("try { if (location.origin !== 'null') localStorage.setItem('coinSettings', JSON.stringify({quality:'medium'})); } catch (e) {}")
+        # SwiftShader is a software renderer in CI; use Low to exercise the real scene without software-shadow bottlenecks.
+        page.add_init_script("try { if (location.origin !== 'null') localStorage.setItem('coinSettings', JSON.stringify({quality:'low'})); } catch (e) {}")
         page.goto(url, wait_until='networkidle', timeout=45000)
         page.wait_for_timeout(2500)
 
@@ -103,7 +103,7 @@ try:
         metrics['mobileCanvasVisible'] = page.locator('canvas').first.is_visible()
         if not metrics['mobileCanvasVisible']:
             raise RuntimeError('Renderer canvas disappeared at mobile viewport size')
-        page.set_viewport_size({'width': 1440, 'height': 900})
+        page.set_viewport_size({'width': 1280, 'height': 720})
 
         metrics['rafFps'] = page.evaluate(
             "async()=>{let n=0;let start=performance.now();return await new Promise(resolve=>{function f(t){n++;if(t-start>=2500)resolve({frames:n,elapsedMs:Math.round(t-start),fps:Math.round(n*1000/(t-start)*10)/10});else requestAnimationFrame(f)}requestAnimationFrame(f)})}"
