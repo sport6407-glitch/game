@@ -1,0 +1,23 @@
+{
+  "file": "/mnt/data/Coin_Mountain_Ascension_Premium_Visual_Overhaul.html",
+  "file_bytes": 89491,
+  "console": [],
+  "pageErrors": [],
+  "responses": [],
+  "title": "Coin Mountain: Ascension 3D",
+  "menuVisible": true,
+  "engineError": " and new biomes.\n\nControls: WASD to walk, mouse to look, Space to jump, hold E (or the left mouse button) near the mountain to collect, B for upgrades, Q to cycle owned tools, and 1\u20136 to trigger each unlocked path\u2019s ultimate. Golden coins appear around the world \u2014 follow the light beams. If mouse capture is blocked, click and drag to look around.\n\nStart exploring\nSettings\nReset progress\n\nProgress saves automatically in this browser. Requires an internet connection to load the Three.js 3D engine.",
+  "canvasCount": 1,
+  "webglProbe": {
+    "webgl": false,
+    "error": null,
+    "version": null,
+    "renderer": null,
+    "vendor": null
+  },
+  "animationFrameRateProbe": {
+    "frames": 122,
+    "seconds": 2,
+    "fps": 60.9
+  }
+}

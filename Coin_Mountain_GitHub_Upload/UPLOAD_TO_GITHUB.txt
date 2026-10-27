@@ -1,0 +1,19 @@
+COIN MOUNTAIN: ASCENSION — GITHUB UPLOAD PACKAGE
+
+WHAT THIS IS
+This is the source project for GitHub, not a prebuilt standalone game. The GitHub Actions workflow is included at .github/workflows/build.yml. It installs the official npm package three@0.160.0, builds the game with Vite, runs the gameplay regression suite, and attempts a real Chromium/WebGL smoke test. The results must be checked in GitHub Actions before claiming rendering succeeded.
+
+HOW TO UPLOAD WITHOUT CODING
+1. Download and extract Coin_Mountain_Ascension_GitHub_Upload.zip on your computer.
+2. Open your existing game repository on github.com.
+3. Create a separate branch first (for example: cloud-build-three-160) so the default branch stays unchanged.
+4. On that branch, use Add file > Upload files.
+5. Upload the extracted FILES AND FOLDERS from this package, including the hidden .github folder. Do not upload only the ZIP file.
+6. If GitHub asks whether to replace existing files, review carefully. This package contains the Vite source at src/main.js, the entry index.html, pinned package.json, and workflow. Keep unrelated existing project files.
+7. Commit the upload to the new branch.
+8. Open the repository's Actions tab and open the “Build Coin Mountain” run. Download the “Coin-Mountain-Ascension-Production-Build” artifact if the workflow passes.
+
+IMPORTANT
+- Do not merge the branch into the default branch until you review the build/test result.
+- A passing mock-renderer gameplay regression test is not proof of real 3D rendering. Check the separate Chromium/WebGL smoke-test step.
+- The game-reference.html and preserved-builds/ files are included for regression testing and historical preservation.

@@ -1,0 +1,24 @@
+{
+  "build": "Coin_Mountain_Ascension_Premium_Visual_Overhaul_Retry.html",
+  "bytes": 90229,
+  "sha256": "7cc04ebfc44bd85452e489adebf25ee6d5eee950e267629ea1c3977838d40ba6",
+  "browser": "Chromium",
+  "viewport": "1440x900",
+  "mode": "page.set_content (localhost navigation is policy-blocked)",
+  "webgl": {
+    "available": false,
+    "error": null,
+    "version": null,
+    "renderer": null
+  },
+  "engineModule": null,
+  "errors": [],
+  "title": "Coin Mountain: Ascension 3D",
+  "startDisabled": false,
+  "engineErrorVisible": false,
+  "engineErrorText": "",
+  "canvasCount": 1,
+  "interpretation": "The HTML static interface was displayed through page.set_content. In this mode the module script did not run, so this capture does not prove module loading or 3D rendering. A separate navigation attempt to a local HTTP server was blocked by ERR_BLOCKED_BY_ADMINISTRATOR.",
+  "realSceneRendered": false,
+  "fpsMeasured": false
+}

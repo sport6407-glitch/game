@@ -1,0 +1,42 @@
+START_READY False CANVASES ['', 'minimap']
+ERROR_TEXT tton) near the mountain to collect, B for upgrades, Q to cycle owned tools, and 1–6 to trigger each unlocked path’s ultimate. Golden coins appear around the world — follow the light beams. If mouse capture is blocked, click and drag to look around.
+
+Start exploring
+Settings
+Reset progress
+
+Progress saves automatically in this browser. Requires an internet connection to load the Three.js 3D engine.
+QA_AVAILABLE True
+AFTER_START {"TOTAL":1500000,"goldenTimer":6,"collected":0,"wallet":0,"rate":1,"tool":"Bare hands","path":null,"binds":{"forward":"KeyW","back":"KeyS","left":"KeyA","right":"KeyD","jump":"Space","collect":"KeyE","shop":"KeyB","sprint":"ShiftLeft"},"upgradeLevel":{"hand":0,"machine":0,"magnet":0,"bag":0,"automation":0,"alchemy":0},"droneCount":0,"ascensions":0,"runSeconds":0,"won":false,"shopOpen":false,"settingsOpen":false,"menuVisible":false,"abilityCooldowns":{"hand":0,"machine":0,"magnet":0,"bag":0,"automation":0,"alchemy":0},"abilityBuffs":{"hand":0,"machine":0,"magnet":0,"bag":0,"automation":0,"alchemy":0},"ownedPaths":[],"toolNames":["Handcraft","Machinery","Magnetics","Bags & Hauling","Automation","Fortune Tech"],"goalHeading":"1,500,000 COINS!"}
+ONBOARDING_OBJECTIVE Hold E near the mountain to collect your first coins.
+OBJECTIVE_AFTER_FIRST_COINS Open upgrades with B and buy your first tool to increase collection speed.
+ABILITY_BUTTONS 6
+RESPONSIVE_LAYOUT {'width': 320, 'hudSettings': {'left': 221.765625, 'right': 312, 'top': 8, 'bottom': 41}, 'abilityBar': {'left': 8, 'right': 203, 'top': 294, 'bottom': 434}, 'minimap': {'left': 208, 'right': 312, 'top': 456, 'bottom': 560}, 'top': {'left': 0, 'right': 156, 'top': 0, 'bottom': 447}, 'objective': {'left': 8, 'right': 312, 'top': 238, 'bottom': 310.875}}
+RESPONSIVE_LAYOUT {'width': 390, 'hudSettings': {'left': 291.765625, 'right': 382, 'top': 8, 'bottom': 41}, 'abilityBar': {'left': 8, 'right': 273, 'top': 427, 'bottom': 584}, 'minimap': {'left': 278, 'right': 382, 'top': 732, 'bottom': 836}, 'top': {'left': 0, 'right': 226, 'top': 0, 'bottom': 317}, 'objective': {'left': 8, 'right': 382, 'top': 238, 'bottom': 310.875}}
+RESPONSIVE_LAYOUT {'width': 768, 'hudSettings': {'left': 655.765625, 'right': 752, 'top': 16, 'bottom': 53}, 'abilityBar': {'left': 16, 'right': 555, 'top': 787, 'bottom': 884}, 'minimap': {'left': 602, 'right': 752, 'top': 858, 'bottom': 1008}, 'top': {'left': 0, 'right': 604, 'top': 0, 'bottom': 142}, 'objective': {'left': 298.125, 'right': 760, 'top': 697.3125, 'bottom': 754}}
+RESPONSIVE_LAYOUT {'width': 1440, 'hudSettings': {'left': 1327.765625, 'right': 1424, 'top': 16, 'bottom': 53}, 'abilityBar': {'left': 16, 'right': 555, 'top': 663, 'bottom': 760}, 'minimap': {'left': 1274, 'right': 1424, 'top': 734, 'bottom': 884}, 'top': {'left': 0, 'right': 1276, 'top': 0, 'bottom': 81}, 'objective': {'left': 984, 'right': 1264, 'top': 657.125, 'bottom': 730}}
+SETTINGS_VISIBLE True
+SETTINGS_SANITIZATION {'binds': {'forward': 'KeyW', 'back': 'KeyS', 'left': 'KeyA', 'right': 'KeyD', 'jump': 'Space', 'collect': 'KeyE', 'shop': 'KeyB', 'sprint': 'ShiftLeft'}, 'help': '<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> move · <kbd>Mouse</kbd> look (or drag) · <kbd>Space</kbd> jump · <kbd>Left Shift</kbd> sprint · <kbd>Hold E</kbd> collect · <kbd>B</kbd> upgrades · <kbd>Q</kbd> switch tool · <kbd>1–6</kbd> ultimates · <kbd>Esc</kbd> pause', 'volume': '100', 'sensitivity': '25', 'images': 0}
+MILESTONE_REWARD {'collected': 15000, 'wallet': 15663}
+SHOP_PATHS 6 UPGRADE_BUTTONS 30
+DESIGN_TUNING {'hand': '1. Padded gloves\nCost: 30 · +0.54 coins/sec', 'machine': '1. Steel coin scoop\nCost: 44 · +0.69 coins/sec', 'magnet': '1. Pocket magnet\nCost: 50 · +0.78 coins/sec', 'bag': '1. Canvas coin pouch\nCost: 44 · +0.54 coins/sec', 'automation': '1. Clockwork helper\nCost: 70 · +0.42 coins/sec', 'alchemy': '1. Lucky charm\nCost: 60 · +0.6 coins/sec'}
+RECOMMENDED_UPGRADE 1. Padded gloves
+Cost: 30 · +0.54 coins/sec · BEST VALUE
+ALL_PATHS_STATE ['hand', 'machine', 'magnet', 'bag', 'automation', 'alchemy'] {'hand': 5, 'machine': 5, 'magnet': 5, 'bag': 5, 'automation': 5, 'alchemy': 5} rate 202.41999999999996
+TOOL_CYCLE ['hand', 'machine', 'magnet', 'bag', 'automation', 'alchemy']
+SAVE_LOAD 678 4321
+ULT hand cd 35 buff 10 coins 678
+ULT machine cd 42 buff 0 coins 3511
+ULT magnet cd 48 buff 12 coins 3511
+ULT bag cd 40 buff 12 coins 3511
+ULT automation cd 52 buff 15 coins 3511
+ULT alchemy cd 55 buff 0 coins 7559
+ABILITY_SAVE_LOAD 34.959 9.959
+ABILITY_OFFLINE_EXPIRY 22.999000000000002 0
+COOLDOWNS_AFTER_TICK {"hand":0,"machine":0,"magnet":0,"bag":0,"automation":0,"alchemy":0}
+NATURAL_COLLECTED_IN_200_FRAMES 2633
+WIN_STATE 1500000 True 1,500,000 COINS! winVisible True
+ASCENSION_STATE 1 0 0 []
+GOLDEN_FINAL_COIN {'collected': 1500000, 'won': True, 'wallet': 159964}
+LEGITIMATE_RUN_SIMULATION {'steps': 1512, 'runSeconds': 1512, 'collected': 1500000, 'wallet': 1203276, 'rate': 202.41999999999996, 'upgradeLevel': {'hand': 5, 'machine': 5, 'magnet': 5, 'bag': 5, 'automation': 5, 'alchemy': 5}, 'droneCount': 25, 'won': True, 'ascensions': 0}
+PASS: automated logic checks and full progression simulation passed; no browser or console errors.

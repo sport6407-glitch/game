@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Mountain: Ascension 3D</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#101925;font-family:system-ui,Segoe UI,sans-serif;color:#fff}canvas{display:block;touch-action:none}
+#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 2px 4px #000}#top{display:flex;gap:10px;padding:16px;align-items:flex-start;flex-wrap:wrap;max-width:calc(100vw - 150px)}
+.stat{background:#101827d9;border:1px solid #ffffff25;border-radius:12px;padding:8px 13px;min-width:108px;backdrop-filter:blur(8px)}.stat small{display:block;color:#b8c7d9;font-size:10px;text-transform:uppercase;letter-spacing:1px}.stat strong{font-size:18px}.gold{color:#ffd65b}
+#progressWrap{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);width:min(420px,56vw);background:#0a111bcc;border:1px solid #ffffff30;border-radius:99px;padding:4px}#progress{height:8px;width:0;background:linear-gradient(90deg,#f9a825,#fff09c);border-radius:99px;transition:width .15s}
+#objective{position:fixed;right:176px;bottom:170px;max-width:min(280px,calc(100vw - 200px));padding:9px 12px;background:#101827d9;border:1px solid #ffd65b55;border-radius:10px;font-size:12px;line-height:1.35;pointer-events:none;backdrop-filter:blur(8px);transition:opacity .2s}#objective b{color:#ffd65b;display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}#objective span{color:#e7eef8}@media(max-width:700px){#objective{left:8px;right:8px;top:238px;bottom:auto;max-width:none;font-size:11px;padding:6px 9px}}
+@media(min-width:701px) and (max-width:900px){#objective{right:8px;bottom:270px;max-width:calc(100vw - 200px)}}
+#help{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff25;border-radius:12px;padding:10px 16px;text-align:center;font-size:13px;max-width:60vw}
+#lookHint{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff25;border-radius:10px;padding:6px 14px;text-align:center;font-size:13px;max-width:90vw;color:#ffe9a6}
+kbd{background:#fff;color:#111;border-radius:4px;padding:2px 6px;font-weight:800;text-shadow:none}
+#hudSettings{position:fixed;right:16px;top:16px;z-index:5;pointer-events:auto;background:#101827e8;color:#fff;border:1px solid #ffffff30;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}
+#crosshair{position:fixed;left:50%;top:50%;width:8px;height:8px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 6px #000}
+#minimap{position:fixed;right:16px;bottom:16px;width:150px;height:150px;border-radius:50%;border:2px solid #ffffff35;box-shadow:0 4px 18px #0008}
+#prompt{position:fixed;left:50%;top:57%;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff30;border-radius:10px;padding:6px 14px;font-size:14px}
+#combo{position:fixed;left:50%;top:63%;transform:translateX(-50%);width:210px;text-align:center;font-size:12px;font-weight:800;letter-spacing:1px;color:#ffe08a}#combo .bar{height:6px;border-radius:9px;background:#0a111bcc;border:1px solid #ffffff30;overflow:hidden;margin-top:3px}#comboFill{height:100%;width:0;background:linear-gradient(90deg,#ffb300,#fff09c)}
+#toasts{position:fixed;left:50%;top:78px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;z-index:6}
+.toast{background:linear-gradient(135deg,#3b2c0af0,#1a2233f0);border:1px solid #ffd65b88;border-radius:12px;padding:9px 18px;text-align:center;animation:toastIn .35s ease-out,toastOut .5s ease-in 3.7s forwards;text-shadow:none}.toast b{display:block;color:#ffd65b}.toast small{color:#d6e0ee}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px)}}@keyframes toastOut{to{opacity:0;transform:translateY(-8px)}}
+.float{position:fixed;left:50%;top:47%;font-weight:900;font-size:20px;color:#ffe27a;pointer-events:none;z-index:6;text-shadow:0 2px 6px #000;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-70px)}}
+#vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 48%,rgba(1,9,12,.22) 78%,rgba(1,7,10,.72) 100%)}
+/* restrained expedition HUD micro-detail */
+.stat small,.tag,#objective b{font-weight:800;text-transform:uppercase;letter-spacing:1.35px}
+#progressWrap{border-color:rgba(245,207,120,.4)}#progress{background:linear-gradient(90deg,#a96e25,#e8bb57 55%,#fff0bb);box-shadow:0 0 18px rgba(232,187,87,.38)}
+.path h3{color:#e7d3a1}.perk{color:#e6c878}
+#help kbd{background:#d6c18c;color:#10272c;box-shadow:0 1px 0 #8b7445}
+#menu,#shop,#win,#settings{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#07101b99;backdrop-filter:blur(5px);pointer-events:auto}#shop{z-index:11}#settings{z-index:12}
+#menu .panel,#shop .panel,#win .panel,#settings .panel{width:min(700px,92vw);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#1d2b3f,#101827);border:1px solid #ffffff2b;border-radius:22px;padding:26px;box-shadow:0 20px 80px #0008}
+#shop .panel{width:min(900px,95vw)}
+h1{margin:0 0 8px;font-size:clamp(30px,5vw,48px);line-height:1.05}h2{margin:0 0 14px}h3{margin:0 0 8px}p{color:#c7d4e4;line-height:1.55}
+.button{border:0;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:800;background:#ffcc4d;color:#302300;cursor:pointer}.button:hover{filter:brightness(1.1)}.button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#33445b;color:#fff}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.upgrade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.path{background:#0b1422;border:1px solid #ffffff22;border-radius:14px;padding:12px}.path h3{margin:0 0 6px;font-size:16px}.perk{font-size:12px;color:#ffdb69;margin:2px 0 8px;line-height:1.4}
+.upgrade{width:100%;text-align:left;background:#25364c;color:#fff;border:1px solid #ffffff1b;border-radius:9px;padding:10px;margin:5px 0;cursor:pointer}.upgrade:disabled{opacity:.4;cursor:not-allowed}.upgrade b{display:block}.upgrade small{color:#b9c7d8}
+#abilityBar{position:fixed;left:16px;bottom:140px;display:grid;grid-template-columns:repeat(3,minmax(130px,175px));gap:7px;pointer-events:auto;max-width:calc(100vw - 190px);z-index:4}
+.ability-btn{background:linear-gradient(145deg,#18283bdf,#0b1422ef);border:1px solid #ffffff36;border-radius:10px;color:#fff;padding:8px 10px;text-align:left;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 5px 18px #0005;min-width:0}
+.ability-btn b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ability-btn small{display:block;color:#c4d2e3;font-size:10px;margin-top:2px}.ability-btn:disabled{opacity:.55;cursor:default}.ability-btn.ready{border-color:#ffdb69;box-shadow:0 0 16px #ffbd4540}.ability-btn .cooldown{color:#ffd56a}
+#abilityFlash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:3;background:radial-gradient(circle at center,#fff4a533,transparent 60%)}#abilityFlash.pulse{animation:abilityPulse .55s ease-out}
+@keyframes abilityPulse{0%{opacity:1}100%{opacity:0}}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#ffdb69}.hidden{display:none!important}
+.settings-panel{width:min(780px,94vw)!important}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.setting-card{background:#0b1422;border:1px solid #ffffff22;border-radius:12px;padding:14px}.setting-card label{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0;color:#dce6f3}.setting-card input[type=range]{width:100%;accent-color:#ffcc4d}
+.setting-card select{background:#26374d;color:#fff;border:1px solid #ffffff2b;border-radius:7px;padding:6px 8px}
+.bind-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0}.bind-key{min-width:86px;background:#26374d;color:#fff;border:1px solid #ffffff2b;border-radius:7px;padding:7px 10px;cursor:pointer}.bind-key.listening{background:#785d17;color:#fff3bd}.settings-note{font-size:12px;color:#aebfd2}
+@media(max-width:700px){#abilityBar{left:8px;bottom:260px;grid-template-columns:repeat(2,minmax(110px,1fr));max-width:calc(100vw - 125px);gap:5px}.ability-btn{padding:6px 8px}.ability-btn b{font-size:10px} .settings-grid{grid-template-columns:1fr}.upgrade-grid,.extra-grid{grid-template-columns:1fr}#top{max-width:100vw;padding-right:100px}.stat{min-width:90px;padding:6px 9px}.stat strong{font-size:15px}#help{max-width:92vw;bottom:176px}#progressWrap{bottom:224px}#minimap{width:110px;height:110px}}
+/* Short-screen HUD layout: keep stats, hints, abilities, and minimap from covering one another. */
+@media(max-width:700px) and (max-height:700px){
+ #top{width:100vw;max-width:100vw;padding:8px 120px 0 8px;gap:4px}
+ .stat{min-width:0;flex:1 1 calc(50% - 2px);padding:4px 6px;border-radius:8px}
+ .stat small{font-size:8px;letter-spacing:.5px}
+ .stat strong{font-size:12px}
+ #abilityBar{left:8px;bottom:134px;grid-template-columns:repeat(2,minmax(0,1fr));width:calc(100vw - 125px);max-width:calc(100vw - 125px);gap:4px}
+ .ability-btn{padding:5px 6px}
+ .ability-btn b{font-size:9px}
+ .ability-btn small{font-size:9px}
+ #help{left:8px;right:8px;top:145px;bottom:auto;transform:none;max-width:none;font-size:10px;line-height:1.35;padding:6px 8px;text-align:left}
+ #lookHint{left:8px;right:8px;top:204px;bottom:auto;transform:none;max-width:none;font-size:11px;padding:5px 8px}
+ #prompt{top:44%;font-size:11px;max-width:calc(100vw - 20px)}
+ #combo{top:42%;font-size:10px}
+ #progressWrap{left:8px;bottom:12px;transform:none;width:calc(100vw - 140px)}
+}
+
+
+/* PREMIUM ART-DIRECTION PASS: expedition brass, deep teal enamel, ink-black glass. */
+:root{--ui-glass:rgba(7,20,27,.88);--ui-line:rgba(170,211,205,.22);--ui-gold:#f5cf78;--ui-text:#f4f5ec;--ui-muted:#b8c9c7}
+body{background:#071318;color:var(--ui-text);font-family:Inter,ui-sans-serif,system-ui,'Segoe UI',sans-serif;letter-spacing:.01em}
+#top{gap:8px;padding:14px;max-width:calc(100vw - 164px)}
+.stat{background:linear-gradient(145deg,rgba(19,44,48,.94),rgba(6,19,26,.94));border:1px solid var(--ui-line);border-top-color:rgba(255,255,255,.27);border-radius:13px;padding:9px 13px;box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.045);backdrop-filter:blur(12px)}
+.stat small{color:#c5d3e6;font-size:10px;letter-spacing:1.05px}.stat strong{font-variant-numeric:tabular-nums;letter-spacing:.1px}.gold{color:var(--ui-gold);text-shadow:0 0 18px rgba(255,204,77,.14)}
+#progressWrap{height:17px;padding:3px;background:rgba(5,11,20,.9);border-color:rgba(255,255,255,.2);box-shadow:0 6px 24px #0005;overflow:hidden}#progress{height:9px;box-shadow:0 0 14px rgba(255,193,50,.42)}
+#objective{background:linear-gradient(145deg,rgba(18,31,49,.94),rgba(7,14,25,.92));border:1px solid rgba(255,214,91,.42);box-shadow:0 10px 30px #0005,inset 0 1px 0 #ffffff12;border-radius:12px;padding:11px 14px;font-size:12px}
+#help,#lookHint,#prompt{background:rgba(8,17,30,.88);border:1px solid var(--ui-line);box-shadow:0 8px 24px #0004;backdrop-filter:blur(10px)}
+#help{border-radius:12px;line-height:1.8;color:#e4edf8}kbd{box-shadow:0 1px 0 #b9c6d8;font-size:11px;padding:2px 5px}
+#minimap{border:2px solid rgba(255,221,131,.7);box-shadow:0 0 0 4px rgba(7,15,27,.58),0 10px 32px #0009}
+#crosshair{width:10px;height:10px;border:1.5px solid rgba(255,255,255,.95);box-shadow:0 0 0 2px #09111d80,0 0 12px #fff6}
+#hudSettings{background:linear-gradient(145deg,#1c2b41f5,#0b1423f5);border-color:#ffffff36;box-shadow:0 8px 22px #0005;transition:transform .15s,border-color .15s}#hudSettings:hover{transform:translateY(-1px);border-color:#f5cf78}
+#menu,#shop,#win,#settings{background:radial-gradient(ellipse at 50% 15%,rgba(45,94,91,.34),rgba(2,10,14,.94));backdrop-filter:blur(9px)}
+#menu .panel,#shop .panel,#win .panel,#settings .panel{background:linear-gradient(145deg,rgba(21,49,53,.99),rgba(6,18,24,.995) 72%);border:1px solid rgba(222,202,153,.3);box-shadow:0 28px 100px #000b,inset 0 1px 0 #ffffff0d}
+h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.tag{color:#ffdf82;letter-spacing:1.5px}
+.button{background:linear-gradient(180deg,#f9e2a1,#d7a946);box-shadow:0 5px 0 #79551e,0 10px 22px #0003;transition:transform .12s,filter .12s,box-shadow .12s}.button:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 6px 0 #9d6d13,0 12px 25px #0004}.button:active{transform:translateY(2px);box-shadow:0 2px 0 #9d6d13}
+.path,.setting-card{background:linear-gradient(145deg,rgba(15,39,43,.98),rgba(5,17,23,.99));border-color:rgba(184,212,196,.18);box-shadow:inset 0 1px 0 #ffffff08}
+.upgrade{background:linear-gradient(145deg,#28505a,#14333d);border-color:#ffffff20;transition:background .12s,border-color .12s,transform .12s}.upgrade:not(:disabled):hover{background:linear-gradient(145deg,#3b526d,#233951);border-color:#f5cf78aa;transform:translateY(-1px)}.upgrade:disabled{opacity:.48}
+.ability-btn{background:linear-gradient(145deg,rgba(24,42,62,.94),rgba(7,15,27,.96));border-color:rgba(225,238,255,.22);transition:transform .12s,border-color .12s,box-shadow .12s}.ability-btn:not(:disabled):hover{transform:translateY(-2px);border-color:#f5cf78;box-shadow:0 8px 24px #0006,0 0 18px #ffcc4d18}.ability-btn.ready{background:linear-gradient(145deg,rgba(75,57,20,.96),rgba(18,24,32,.97));border-color:#ffdc77;box-shadow:0 0 0 1px #ffdc7730,0 0 20px #ffbd4540}
+.toast{box-shadow:0 12px 34px #0008;border-color:#f5cf78aa}
+:focus-visible{outline:2px solid #f5cf78!important;outline-offset:3px}
+@media(max-width:700px){#top{padding:8px 112px 0 8px;gap:5px}.stat{padding:6px 8px}.stat small{font-size:8px;letter-spacing:.7px}.stat strong{font-size:13px}#hudSettings{right:8px;top:8px;padding:8px 10px}#minimap{right:8px;bottom:8px;width:104px;height:104px}#objective{border-radius:10px}#progressWrap{width:calc(100vw - 132px)}#help{font-size:11px}}
+@media(max-width:700px) and (max-height:700px){#objective{top:238px}#help{top:145px;line-height:1.5}#lookHint{top:204px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+</style></head><body>
+<button id="hudSettings">⚙ Settings</button>
+<div id="hud"><div id="vignette"></div><div id="top">
+<div class="stat"><small>Coins collected</small><strong id="collected">0 / 1,500,000</strong></div>
+<div class="stat"><small>Wallet</small><strong class="gold" id="wallet">0</strong></div>
+<div class="stat"><small>Collection rate</small><strong id="rate">1 / sec</strong></div>
+<div class="stat"><small>Auto income</small><strong id="auto">0 / sec</strong></div>
+<div class="stat"><small>Tool</small><strong id="tool">Bare hands</strong></div>
+<div class="stat"><small>Ascension</small><strong id="asc">0 · ×1.00</strong></div></div>
+<div id="progressWrap"><div id="progress"></div></div><div id="objective"><b>Next objective</b><span id="objectiveText">Reach the mountain and hold E to collect coins.</span></div><div id="abilityBar" aria-label="Ultimate abilities"></div><div id="abilityFlash"></div><div id="crosshair"></div><div id="prompt" class="hidden"></div>
+<div id="combo" class="hidden"><span id="comboText">COMBO ×1.00</span><div class="bar"><div id="comboFill"></div></div></div>
+<div id="lookHint" class="hidden"></div><div id="help"></div><canvas id="minimap" width="150" height="150"></canvas></div>
+<div id="toasts"></div>
+<div id="menu"><div class="panel"><div class="tag">First-person 3D idle adventure</div><h1>COIN MOUNTAIN:<br><span class="gold">ASCENSION</span></h1>
+<p>A 1,500,000-coin mountain towers over the valley. Collect, bank, and upgrade across six paths without being locked into a single build. Equip different tools, unleash cooldown-based ultimate abilities, build a drone fleet, and clear the mountain to <b>Ascend</b> for permanent bonuses and new biomes.</p>
+<p><b>Controls:</b> WASD to walk, mouse to look, Space to jump, hold E (or the left mouse button) near the mountain to collect, B for upgrades, Q to cycle owned tools, and 1–6 to trigger each unlocked path’s ultimate. Golden coins appear around the world — follow the light beams. If mouse capture is blocked, click and drag to look around.</p>
+<p id="saveInfo" class="gold" style="font-weight:700"></p>
+<div class="row"><button class="button" id="start">Start exploring</button><button class="button secondary" id="openSettings">Settings</button><button class="button secondary" id="reset">Reset progress</button></div>
+<p style="font-size:12px">Progress saves automatically in this browser. The 3D engine is bundled with the game.</p></div></div>
+<div id="settings" class="hidden"><div class="panel settings-panel"><div class="row" style="justify-content:space-between"><div><div class="tag">Game options</div><h2>Settings</h2></div><button id="closeSettings" class="button secondary">Close</button></div><div class="settings-grid">
+<section class="setting-card"><h3>Audio</h3><label for="masterVolume">Master volume <span id="volumeValue">70%</span></label><input id="masterVolume" type="range" min="0" max="100" value="70"><label for="sfxVolume">Sound effects <span id="sfxValue">80%</span></label><input id="sfxVolume" type="range" min="0" max="100" value="80"><label for="ambVolume">Ambience <span id="ambValue">50%</span></label><input id="ambVolume" type="range" min="0" max="100" value="50"><p class="settings-note">Wind, birdsong, footsteps, collecting and purchase sounds use these levels.</p></section>
+<section class="setting-card"><h3>Camera</h3><label for="sensitivity">Mouse sensitivity <span id="sensitivityValue">100%</span></label><input id="sensitivity" type="range" min="25" max="250" value="100"><label for="fov">Field of view <span id="fovValue">75°</span></label><input id="fov" type="range" min="60" max="110" value="75"><label><span>Invert mouse Y</span><input id="invertY" type="checkbox"></label><label><span>Head bob</span><input id="headBob" type="checkbox" checked></label><p class="settings-note">Move the mouse to look when captured; if capture is blocked, click and drag the 3D world. Press Esc to release the mouse.</p></section>
+<section class="setting-card"><h3>Key binds</h3><div id="keybindRows"></div><p class="settings-note">Select a key, then press the new key. If it is already used, the two actions swap. Escape cancels.</p></section>
+<section class="setting-card"><h3>Gameplay &amp; graphics</h3><label><span>Show control hints</span><input id="showHints" type="checkbox" checked></label><label for="quality"><span>Graphics quality</span><select id="quality"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label><p class="settings-note">You spawn on the grass outside the coin mountain. Lower the quality if the game runs slowly.</p><button id="defaultsSettings" class="button secondary">Restore defaults</button></section></div></div></div>
+<div id="shop" class="hidden"><div class="panel"><div class="row" style="justify-content:space-between"><div><div class="tag">Investment terminal</div><h2>Upgrade your operation</h2></div><button id="closeShop" class="button secondary">Close (B)</button></div><p>Build across all six paths—nothing locks you out of another branch. The gold outline marks the best income-per-coin upgrade you can afford right now. Press <b>Q</b> to cycle through tools you own, or use <b>1–6</b> to trigger each unlocked path’s ultimate ability.</p><div class="upgrade-grid" id="upgradeGrid"></div><div class="extra-grid" id="extras"></div><p id="shopNote" style="font-size:13px"></p></div></div>
+<div id="win" class="hidden"><div class="panel"><div class="tag">Mountain conquered</div><h1>1,500,000 COINS!</h1><p>You cleared the entire mountain. Ascend to start over with a permanent collection bonus and a new world waiting for you.</p><p id="winStats" class="gold" style="font-weight:700"></p><button class="button" id="ascend">Ascend</button></div></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

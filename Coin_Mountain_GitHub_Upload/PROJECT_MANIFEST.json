@@ -1,0 +1,117 @@
+{
+  "project": "Coin Mountain: Ascension",
+  "threeVersion": "0.160.0",
+  "status": "prepared cloud build project; npm runner must fetch official Three.js dependency and execute real-WebGL smoke test",
+  "files": [
+    {
+      "path": ".github/workflows/build.yml",
+      "bytes": 1656,
+      "sha256": "d3c85c0fe63d6c6a38757c56d1dd29d622441a0014f5a840c19a1d4e7e0f8b4d"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 63,
+      "sha256": "be07773f264cfa4da8344900f8d09b1f52f5887fd1b218b1f8de8ee6cb935323"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2221,
+      "sha256": "f63061e16951f63c05f6e2c717f0ebd3d612b4793f26103e01ed9d64b56e4936"
+    },
+    {
+      "path": "diagnostics/Coin_Mountain_Latest_Dependency_Diagnostic.json",
+      "bytes": 930,
+      "sha256": "df5bb7bcb87b96b8aa801304a7578a170a6ef6a1a738607245782c6ed0c5c542"
+    },
+    {
+      "path": "diagnostics/Coin_Mountain_RealBrowser_Probe.json",
+      "bytes": 999,
+      "sha256": "3f98e19f917785b8607eab23a7753ecf0a3e952f69385c198d2a6281fd6696cd"
+    },
+    {
+      "path": "diagnostics/Coin_Mountain_RealWebGL_Regression.txt",
+      "bytes": 5258,
+      "sha256": "51fef5777f40cb94bb58e6fd2fa8aa2e3f93d4676e8de2000ff34343b0181d8f"
+    },
+    {
+      "path": "diagnostics/baseline-gameplay-regression.txt",
+      "bytes": 5242,
+      "sha256": "c79d596e223a433598be82903815fd8a8bdc47ffad6a70d5cb0090700b24dfc3"
+    },
+    {
+      "path": "game-reference.html",
+      "bytes": 90229,
+      "sha256": "7cc04ebfc44bd85452e489adebf25ee6d5eee950e267629ea1c3977838d40ba6"
+    },
+    {
+      "path": "index.html",
+      "bytes": 20417,
+      "sha256": "0c17d261887f02ec94cb6ba9d706124ef73a0f52d10a9b5b4394ec18ff0fe8ba"
+    },
+    {
+      "path": "package.json",
+      "bytes": 324,
+      "sha256": "d4eaae648f64a4b18b67eab6c2dba19cca00be3727c1a2dc438e9cc1656027bf"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Ascendant_Edition_QA_Cycle1_Fixed.html",
+      "bytes": 77861,
+      "sha256": "c9e34531c39d12d42a27813c9dc564068385a09e995f15f4f83d4062a6d172aa"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Ascendant_Edition_Stable_Cycle2.html",
+      "bytes": 78908,
+      "sha256": "3804c8792c7fd1cc5cbd2b5e5d48bd1ffea5c64be8490601139c43ca0f881559"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Graphics_UI_Polish.html",
+      "bytes": 85936,
+      "sha256": "d6716bc0df56730ffc20ca524c5903c49c257bbadf5e8c3496700a8722c852ba"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Indie_Design_Pass.html",
+      "bytes": 81352,
+      "sha256": "1fcf20f37213f0eea4149c04a21a1b209a3e44ed36c6adb8c1fadb9d79107972"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Premium_Visual_Overhaul.html",
+      "bytes": 89491,
+      "sha256": "2d7ff538b3a754723f5e0eb0f07b64636c45e68b25982b5939a5a458977c64a3"
+    },
+    {
+      "path": "preserved-builds/Coin_Mountain_Ascension_Premium_Visual_Overhaul_Retry.html",
+      "bytes": 90229,
+      "sha256": "7cc04ebfc44bd85452e489adebf25ee6d5eee950e267629ea1c3977838d40ba6"
+    },
+    {
+      "path": "preserved-builds/coin_mountain_ascension_v2(1).html",
+      "bytes": 68685,
+      "sha256": "bdc228f9118c2ed382b34030ccf48664f6adcc0b6367b0659baddbf4af1fd967"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 68755,
+      "sha256": "9984c734417a04ba04336d74aa9beabdf73dfc4d2704bfb3019de6c70b581123"
+    },
+    {
+      "path": "tests/Coin_Mountain_Indie_Design_QA.py",
+      "bytes": 16130,
+      "sha256": "ca6b7df6635c9eb845e8b3e1fd4466c12fc74e215caeba25d133ae6240ecf823"
+    },
+    {
+      "path": "tests/mock_three.js",
+      "bytes": 4670,
+      "sha256": "2cdbf1fc8bebe367e09d7dc570a85ee5d9b91a7ca2f0ddee2e92d9e909d627dc"
+    },
+    {
+      "path": "tests/real_webgl_smoke.py",
+      "bytes": 3295,
+      "sha256": "a0cf8339a55583bbae48352d9c601b20a4c0e1b1c1293379b4985f0bae17ad58"
+    },
+    {
+      "path": "vite.config.js",
+      "bytes": 163,
+      "sha256": "6ae739dce8a57affb8618faef9395fb50aa1513dd68b241a618689f8ac4969ab"
+    }
+  ]
+}
