@@ -89,11 +89,14 @@ try:
         if after_coins == before_coins:
             raise RuntimeError('Holding W to approach the mountain and E to collect did not change the coin counter')
 
-        # Verify the settings overlay remains reachable and responsive after starting a run.
-        page.locator('#hudSettings').click()
+        # Pointer lock intentionally hides the cursor during first-person gameplay,
+        # so Escape is the accessible settings shortcut. Verify that real gameplay path
+        # rather than asking Playwright to click an on-screen button while the cursor is locked.
+        page.keyboard.press('Escape')
+        page.wait_for_timeout(150)
         metrics['settingsOpensInGameplay'] = page.locator('#settings').is_visible()
         if not metrics['settingsOpensInGameplay']:
-            raise RuntimeError('HUD settings button did not open settings during gameplay')
+            raise RuntimeError('Escape did not open settings during pointer-locked gameplay')
         page.locator('#closeSettings').click()
         metrics['settingsCloses'] = not page.locator('#settings').is_visible()
         if not metrics['settingsCloses']:
