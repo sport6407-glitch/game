@@ -88,8 +88,8 @@ function buildPile(){
  const coinMarkGeo=new THREE.CylinderGeometry(.045,.045,.012,12);
  const coinMarkMat=new THREE.MeshStandardMaterial({color:0xffe58b,roughness:.25,metalness:.8});
  coinMarks=new THREE.InstancedMesh(coinMarkGeo,coinMarkMat,COIN_COUNT);coinMarks.count=0;coinMarks.frustumCulled=false;
- coinMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.28,metalness:.5,emissive:0xffb300,emissiveIntensity:0});
- inst=new THREE.InstancedMesh(coinGeo,coinMat,COIN_COUNT);inst.castShadow=true;inst.receiveShadow=true;inst.frustumCulled=false;
+ coinMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.22,metalness:.82,emissive:0xffa000,emissiveIntensity:.08});
+ inst=new THREE.InstancedMesh(coinGeo,coinMat,COIN_COUNT);inst.castShadow=false;inst.receiveShadow=false;inst.frustumCulled=false;
  const palette=[0xffd447,0xffc928,0xe9a91b,0xffe27b].map(c=>new THREE.Color(c));
  const list=[];
  for(let i=0;i<COIN_COUNT;i++){
@@ -125,8 +125,7 @@ function buildScenery(){
   if(i!==5){const a2=(i+.5)/24*Math.PI*2;for(const y of [.55,1.05]){const rail=new THREE.Mesh(new THREE.BoxGeometry(6.2,.11,.09),woodM);rail.position.set(Math.cos(a2)*23.85,y,Math.sin(a2)*23.85);rail.rotation.y=-(a2+Math.PI/2);scene.add(rail)}}
  }
  hillMats=[mat(biomes[0].hill[0],.95),mat(biomes[0].hill[1],.95)];
- for(let i=0;i<34;i++){const x=(Math.random()-.5)*190,z=-38-Math.random()*95,w=7+Math.random()*15,h=11+Math.random()*25;const hill=new THREE.Mesh(new THREE.ConeGeometry(w,h,9,3),hillMats[i%2]);hill.position.set(x,h*.34-1,z);hill.rotation.y=Math.random()*3;hill.scale.z=.7+Math.random()*.55;hill.receiveShadow=true;scene.add(hill);
-  if(i%3===0){const shoulder=new THREE.Mesh(new THREE.ConeGeometry(w*.64,h*.68,8,2),hillMats[(i+1)%2]);shoulder.position.set(x+w*.36,h*.24,z+2.2);shoulder.rotation.y=hill.rotation.y+.8;shoulder.scale.z=.8;scene.add(shoulder)}}
+ // The cinematic faceted alpine ridgelines are generated in buildVisualOverhaul(); avoid stacking the old cone-shaped hills in front of them.
  leafMat=mat(biomes[0].leaf,.9);
  const trunkM=mat(0x5b3d26),rockM=mat(0x70757d,.95);
  const treeN=16+110,trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.25,.38,2.35,8),trunkM,treeN),f1=new THREE.InstancedMesh(new THREE.ConeGeometry(2.05,3.35,9,2),leafMat,treeN),f2=new THREE.InstancedMesh(new THREE.ConeGeometry(1.62,2.75,9,2),mat(biomes[0].leaf,.94),treeN),f3=new THREE.InstancedMesh(new THREE.ConeGeometry(1.08,2.1,9,2),mat(0x6ba76b,.92),treeN);
@@ -145,8 +144,8 @@ function buildScenery(){
  // Signpost at the spawn trail.
  const sc=document.createElement('canvas');sc.width=512;sc.height=256;const g=sc.getContext('2d');g.fillStyle='#7a5435';g.fillRect(0,0,512,256);g.strokeStyle='#4a3220';g.lineWidth=14;g.strokeRect(7,7,498,242);g.fillStyle='#ffe08a';g.textAlign='center';g.font='bold 58px system-ui,sans-serif';g.fillText('COIN MOUNTAIN',256,110);g.font='32px system-ui,sans-serif';g.fillStyle='#fff';g.fillText(`${fmtInt(TOTAL)} coins ahead  ▲`,256,170);
  const stex=new THREE.CanvasTexture(sc);stex.colorSpace=THREE.SRGBColorSpace;
- const board=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.6),new THREE.MeshStandardMaterial({map:stex,roughness:.9}));board.position.set(-4.2,2,21);board.castShadow=true;scene.add(board);
- const post=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,2.8,8),woodM);post.position.set(-4.2,1.4,20.9);post.castShadow=true;scene.add(post);obstacles.push({x:-4.2,z:20.9,r:.25,on:true});
+ const board=new THREE.Mesh(new THREE.PlaneGeometry(2.45,1.22),new THREE.MeshStandardMaterial({map:stex,roughness:.9}));board.position.set(-8.1,1.65,17.4);board.castShadow=true;scene.add(board);
+ const post=new THREE.Mesh(new THREE.CylinderGeometry(.1,.13,2.35,8),woodM);post.position.set(-8.1,1.17,17.4);post.castShadow=true;scene.add(post);obstacles.push({x:-8.1,z:17.4,r:.25,on:true});
 }
 
 // ---------- expanded world-art pass: landmarks, ground detail, mineral formations ----------
@@ -361,7 +360,7 @@ function makeDrone(i){
 }
 function syncDrones(){while(drones.length<droneCount)drones.push(makeDrone(drones.length));while(drones.length>droneCount){const d=drones.pop();droneGroup.remove(d.grp)}}
 function buildRigs(){
- handGroup=new THREE.Group();camera.add(handGroup);scene.add(camera);
+ handGroup=new THREE.Group();handGroup.scale.setScalar(.74);camera.add(handGroup);scene.add(camera);
  const skin=mat(0xd9a477),sleeveM=mat(0x294d70);
  const lS=new THREE.Mesh(new THREE.BoxGeometry(.28,.42,.32),sleeveM);lS.position.set(-.38,-.4,-.65);handGroup.add(lS);const lH=new THREE.Mesh(new THREE.SphereGeometry(.14,16,12),skin);lH.position.set(-.38,-.27,-.78);handGroup.add(lH);
  const rS=new THREE.Mesh(new THREE.BoxGeometry(.28,.42,.32),sleeveM);rS.position.set(.38,-.4,-.65);handGroup.add(rS);
