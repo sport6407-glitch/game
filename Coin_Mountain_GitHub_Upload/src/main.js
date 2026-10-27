@@ -185,11 +185,12 @@ function buildVisualOverhaul(){
  }
  outcrops.instanceMatrix.needsUpdate=true;outcrops.castShadow=true;outcrops.receiveShadow=true;scene.add(outcrops);
  for(let i=0;i<38;i++){
-  const a=Math.random()*Math.PI*2,r=23+Math.random()*12,x=Math.cos(a)*r,z=Math.sin(a)*r;
+  let a=0,r=24,x=0,z=0,tries=0;
+  do{a=Math.random()*Math.PI*2;r=24+Math.random()*10;x=Math.cos(a)*r;z=Math.sin(a)*r;tries++}while(z>11&&Math.abs(x)<12&&tries<24);
   const cluster=new THREE.Group();cluster.position.set(x,.12,z);cluster.rotation.y=Math.random()*6.28;
   const n=2+Math.floor(Math.random()*3);
   for(let j=0;j<n;j++){
-   const h=.8+Math.random()*2.1,cr=new THREE.Mesh(new THREE.OctahedronGeometry(.65,0),crystalMats[i%crystalMats.length]);
+   const h=.45+Math.random()*1.2,cr=new THREE.Mesh(new THREE.OctahedronGeometry(.55,0),crystalMats[i%crystalMats.length]);
    cr.scale.set(.55+Math.random()*.5,h,.55+Math.random()*.5);cr.position.set((Math.random()-.5)*1.15,h*.55,(Math.random()-.5)*1.15);cr.rotation.set((Math.random()-.5)*.22,Math.random()*6.28,(Math.random()-.5)*.22);cr.castShadow=true;cluster.add(cr);
   }
   const footing=new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0),slateLit);footing.scale.set(1.3,.48,1.15);footing.position.y=.38;footing.castShadow=true;cluster.add(footing);scene.add(cluster);
