@@ -1,0 +1,71 @@
+name: Coin Mountain cloud build and browser QA
+
+on:
+  push:
+    branches: [main, master, "codex/**"]
+    paths:
+      - "Coin_Mountain_GitHub_Upload/**"
+      - ".github/workflows/coin-mountain-build.yml"
+  pull_request:
+    paths:
+      - "Coin_Mountain_GitHub_Upload/**"
+      - ".github/workflows/coin-mountain-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Coin_Mountain_GitHub_Upload
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Coin_Mountain_GitHub_Upload/package.json
+
+      - name: Install pinned dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Set up Python
+        if: always()
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install browser test dependencies
+        if: always()
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run gameplay regression suite
+        if: success()
+        run: python tests/Coin_Mountain_Indie_Design_QA.py game-reference.html
+
+      - name: Run real Chromium WebGL smoke test
+        if: success()
+        run: python tests/real_webgl_smoke.py
+
+      - name: Upload production build and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coin-mountain-ascension-build-and-qa
+          path: |
+            Coin_Mountain_GitHub_Upload/dist/
+            Coin_Mountain_GitHub_Upload/artifacts/
+          if-no-files-found: warn
+          retention-days: 14
