@@ -4,13 +4,14 @@ import * as THREE from 'three';
 const $=id=>document.getElementById(id);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 const TOTAL=1500000,BASE_TOP=2,PILE_RADIUS=15,CORE_R=14.6,CORE_H=7.9,EYE=1.7,COIN_COUNT=12000,MAX_PITCH=1.5,ARENA_R=37,SAVE_KEY='coinMountainSave3',MAX_DRONES=25,DRONE_RATE=.6,CYCLE=480,PILE_MIN_R=15.8;
+const QA_MODE=new URLSearchParams(location.search).get('qa')==='1';
 // ---------- state ----------
 let scene,camera,renderer,canvas,clock,sun,moon,hemi,pileLight,stars,starsMat,sunMesh,moonMesh,cloudMat,clouds=[],ambientMotesObj=null;
 let grassMat,hillMats=[],leafMat,coinGroup,core,coreMat,coinMat,inst,coinRims,coinMarks,coinYs=[],pileH=CORE_H,pileYMax=8.3,lastPileStep=-1;
 let handGroup,rigs={},toolMount,props={},droneGroup,drones=[],goldens=[],obstacles=[],particles={};
 let keys={},yaw=0,pitch=0,locked=false,lockBlocked=false,mouseHeld=false,shopOpen=false,settingsOpen=false,settingsFromMenu=false,won=false;
 let dragId=null,dragLastX=0,dragLastY=0,dragMoved=0,lastHint='',lastPrompt='',resetArmed=false;
-let player={x:0,y:EYE,z:25,vy:0,speed:5.2};
+let player={x:0,y:EYE,z:QA_MODE?20:25,vy:0,speed:5.2};
 const defaultBinds={forward:'KeyW',back:'KeyS',left:'KeyA',right:'KeyD',jump:'Space',collect:'KeyE',shop:'KeyB',sprint:'ShiftLeft'};
 let binds={...defaultBinds},rebindAction=null;
 let masterVolume=.7,sfxVolume=.8,ambVolume=.5,mouseSensitivity=1,invertY=false,showHints=true,headBob=true,quality='high',baseFov=75,fovCur=75;
@@ -545,7 +546,7 @@ function winGame(){
 }
 function ascend(){
  ascensions++;collected=0;wallet=0;rate=1;tool='Bare hands';path=null;upgradeLevel={hand:0,machine:0,magnet:0,bag:0,automation:0,alchemy:0};droneCount=0;comboT=0;collectBuffer=0;runSeconds=0;claimedMilestones=new Set();for(const k of pathKeys){abilityCooldowns[k]=0;abilityBuffs[k]=0}won=false;
- syncDrones();clearGoldens();applyBiome();player={x:0,y:floorAt(0,25),z:25,vy:0,speed:5.2};yaw=0;pitch=0;
+ syncDrones();clearGoldens();applyBiome();player={x:0,y:floorAt(0,QA_MODE?20:25),z:QA_MODE?20:25,vy:0,speed:5.2};yaw=0;pitch=0;
  updatePileShape(true);refreshProps();updateToolVisuals();refreshShop();updateHUD();saveGame();
  $('win').classList.add('hidden');$('menu').classList.add('hidden');requestLock();
  toast(`Ascension ${ascensions}!`,`Permanent ×${ascMult().toFixed(2)} bonus · ${biomes[ascensions%biomes.length].name}`);
