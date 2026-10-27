@@ -692,10 +692,12 @@ function setupInput(){
  document.addEventListener('mousedown',e=>{if(locked&&e.button===0&&isPlaying())mouseHeld=true});document.addEventListener('mouseup',e=>{if(e.button===0)mouseHeld=false});
  document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===canvas;if(locked)lockBlocked=false;else mouseHeld=false;dragId=null});
  document.addEventListener('pointerlockerror',()=>{lockBlocked=true});
- canvas.addEventListener('pointerdown',e=>{ensureAudio();if(!isPlaying()||locked)return;if(e.pointerType==='mouse'&&e.button!==0)return;dragId=e.pointerId;dragLastX=e.clientX;dragLastY=e.clientY;dragMoved=0;try{canvas.setPointerCapture(e.pointerId)}catch(err){}});
- canvas.addEventListener('pointermove',e=>{if(e.pointerId!==dragId||locked||!isPlaying())return;const dx=e.clientX-dragLastX,dy=e.clientY-dragLastY;dragLastX=e.clientX;dragLastY=e.clientY;dragMoved+=Math.abs(dx)+Math.abs(dy);look(dx,dy)});
- const endDrag=e=>{if(e.pointerId!==dragId)return;const wasClick=e.type==='pointerup'&&dragMoved<6;dragId=null;try{canvas.releasePointerCapture(e.pointerId)}catch(err){}if(wasClick&&isPlaying()&&!locked)requestLock()};
- canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+  // Keep the renderer canvas click-through so HUD controls always receive input.
+  // Drag-to-look is tracked on document instead of relying on canvas hit-testing.
+  document.addEventListener('pointerdown',e=>{if(!isPlaying()||locked)return;if(e.pointerType==='mouse'&&e.button!==0)return;if(e.target.closest&&e.target.closest('button,a,input,select,textarea,#menu,#shop,#win,#settings'))return;ensureAudio();dragId=e.pointerId;dragLastX=e.clientX;dragLastY=e.clientY;dragMoved=0});
+  document.addEventListener('pointermove',e=>{if(e.pointerId!==dragId||locked||!isPlaying())return;const dx=e.clientX-dragLastX,dy=e.clientY-dragLastY;dragLastX=e.clientX;dragLastY=e.clientY;dragMoved+=Math.abs(dx)+Math.abs(dy);look(dx,dy)});
+  const endDrag=e=>{if(e.pointerId!==dragId)return;const wasClick=e.type==='pointerup'&&dragMoved<6;dragId=null;if(wasClick&&isPlaying()&&!locked)requestLock()};
+  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
  // Always enter gameplay when Start is activated; pointer lock is optional and can be denied by browsers.
  $('start').addEventListener('click',e=>{e.preventDefault();ensureAudio();$('menu').classList.add('hidden');lockBlocked=false;requestLock();if(!locked)$('lookHint').classList.remove('hidden')});
  $('openSettings').onclick=()=>openSettings(true);$('hudSettings').onclick=()=>openSettings(false);$('closeSettings').onclick=closeSettings;
