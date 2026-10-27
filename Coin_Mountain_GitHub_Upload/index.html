@@ -133,9 +133,10 @@ h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.t
 @media(prefers-reduced-motion:reduce){.button,.upgrade{transition:none!important}.toast,.float{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 
-/* Keep the WebGL surface behind clickable HUD controls while leaving the minimap in normal UI flow. */
-#worldCanvas{position:fixed;inset:0;z-index:0;pointer-events:auto} #hudSettings{isolation:isolate}
-#hud{z-index:2}
+/* Explicitly separate the interactive WebGL layer from the HUD stacking context. */
+#worldCanvas{position:fixed;inset:0;z-index:0!important;pointer-events:auto}
+#hud{position:fixed;inset:0;z-index:2147483646!important;isolation:isolate;pointer-events:none}
+#hudSettings{position:fixed;z-index:2147483647!important;pointer-events:auto}
 </style></head><body>
 <div id="hud"><button id="hudSettings">⚙ Settings</button><div id="vignette"></div><div id="top">
 <div class="stat"><small>Coins collected</small><strong id="collected">0 / 1,500,000</strong></div>
