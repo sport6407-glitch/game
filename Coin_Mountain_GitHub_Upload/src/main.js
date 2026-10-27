@@ -148,6 +148,100 @@ function buildScenery(){
  const board=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.6),new THREE.MeshStandardMaterial({map:stex,roughness:.9}));board.position.set(-4.2,2,21);board.castShadow=true;scene.add(board);
  const post=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,2.8,8),woodM);post.position.set(-4.2,1.4,20.9);post.castShadow=true;scene.add(post);obstacles.push({x:-4.2,z:20.9,r:.25,on:true});
 }
+
+// ---------- expanded world-art pass: landmarks, ground detail, mineral formations ----------
+function buildVisualOverhaul(){
+ // Layered stone shelves make the excavation feel carved into a real landscape.
+ const slate=new THREE.MeshStandardMaterial({color:0x37474b,roughness:.92,metalness:.08});
+ const slateLit=new THREE.MeshStandardMaterial({color:0x536365,roughness:.88,metalness:.06});
+ const brass=new THREE.MeshStandardMaterial({color:0xe1b85c,roughness:.32,metalness:.78,emissive:0x4a2b08,emissiveIntensity:.16});
+ const glow=new THREE.MeshStandardMaterial({color:0x74e8df,roughness:.25,metalness:.28,emissive:0x1fc8bd,emissiveIntensity:1.35});
+ const crystalMats=[
+  new THREE.MeshStandardMaterial({color:0x49c9c0,roughness:.2,metalness:.18,emissive:0x0a665f,emissiveIntensity:.7}),
+  new THREE.MeshStandardMaterial({color:0x8d7bff,roughness:.22,metalness:.15,emissive:0x3522a1,emissiveIntensity:.8}),
+  new THREE.MeshStandardMaterial({color:0xffcb62,roughness:.24,metalness:.48,emissive:0x7b4100,emissiveIntensity:.55})
+ ];
+ // Thousands of instanced grass blades break up the flat ground without hundreds of draw calls.
+ const bladeGeo=new THREE.ConeGeometry(.095,.55,4,1);
+ const bladeMat=new THREE.MeshStandardMaterial({color:0x8cb77a,roughness:1,vertexColors:true});
+ const grass=new THREE.InstancedMesh(bladeGeo,bladeMat,2600);grass.frustumCulled=false;
+ const dummy=new THREE.Object3D(),grassColors=[0x9fc27d,0x6f9c68,0xc1c77d,0x638e65].map(c=>new THREE.Color(c));
+ let gi=0;
+ for(let i=0;i<2600;i++){
+  const a=Math.random()*Math.PI*2,r=20.5+Math.random()*90;
+  const x=Math.cos(a)*r,z=Math.sin(a)*r;
+  if(Math.hypot(x,z)<20.3)continue;
+  dummy.position.set(x,.24,z);dummy.rotation.set((Math.random()-.5)*.2,Math.random()*Math.PI,(Math.random()-.5)*.2);
+  const sc=.45+Math.random()*1.15;dummy.scale.set(sc,sc,sc);dummy.updateMatrix();grass.setMatrixAt(gi,dummy.matrix);grass.setColorAt(gi,grassColors[Math.floor(Math.random()*grassColors.length)]);gi++;
+ }
+ grass.count=gi;grass.instanceMatrix.needsUpdate=true;scene.add(grass);
+ // Angular ore outcrops with bright crystal shards form a readable ring around the coin mountain.
+ const rockGeo=new THREE.IcosahedronGeometry(1,1);
+ const outcrops=new THREE.InstancedMesh(rockGeo,slate,92);outcrops.frustumCulled=false;
+ for(let i=0;i<92;i++){
+  const a=i/92*Math.PI*2+(Math.random()-.5)*.12,r=22.5+Math.random()*14,s=.65+Math.random()*1.7;
+  dummy.position.set(Math.cos(a)*r,s*.55,Math.sin(a)*r);dummy.rotation.set(Math.random()*.6,Math.random()*6.28,Math.random()*.45);dummy.scale.set(s*1.35,s*.85,s);dummy.updateMatrix();outcrops.setMatrixAt(i,dummy.matrix);
+ }
+ outcrops.instanceMatrix.needsUpdate=true;outcrops.castShadow=true;outcrops.receiveShadow=true;scene.add(outcrops);
+ for(let i=0;i<38;i++){
+  const a=Math.random()*Math.PI*2,r=23+Math.random()*12,x=Math.cos(a)*r,z=Math.sin(a)*r;
+  const cluster=new THREE.Group();cluster.position.set(x,.12,z);cluster.rotation.y=Math.random()*6.28;
+  const n=2+Math.floor(Math.random()*3);
+  for(let j=0;j<n;j++){
+   const h=.8+Math.random()*2.1,cr=new THREE.Mesh(new THREE.OctahedronGeometry(.65,0),crystalMats[i%crystalMats.length]);
+   cr.scale.set(.55+Math.random()*.5,h,.55+Math.random()*.5);cr.position.set((Math.random()-.5)*1.15,h*.55,(Math.random()-.5)*1.15);cr.rotation.set((Math.random()-.5)*.22,Math.random()*6.28,(Math.random()-.5)*.22);cr.castShadow=true;cluster.add(cr);
+  }
+  const footing=new THREE.Mesh(new THREE.DodecahedronGeometry(1.1,0),slateLit);footing.scale.set(1.3,.48,1.15);footing.position.y=.38;footing.castShadow=true;cluster.add(footing);scene.add(cluster);
+ }
+ // Eight tall survey obelisks and warm lamps establish scale and frame the skyline.
+ for(let i=0;i<8;i++){
+  const a=i/8*Math.PI*2,r=31.5,x=Math.cos(a)*r,z=Math.sin(a)*r;
+  const ob=new THREE.Group();ob.position.set(x,0,z);ob.rotation.y=-a;
+  const plinth=new THREE.Mesh(new THREE.CylinderGeometry(.9,1.1,.55,8),slate);plinth.position.y=.28;plinth.castShadow=true;ob.add(plinth);
+  const shaft=new THREE.Mesh(new THREE.BoxGeometry(.42,3.2,.42),slateLit);shaft.position.y=2;shaft.castShadow=true;ob.add(shaft);
+  const band=new THREE.Mesh(new THREE.TorusGeometry(.38,.065,8,24),brass);band.position.y=2.5;ob.add(band);
+  const lamp=new THREE.Mesh(new THREE.OctahedronGeometry(.38,1),glow);lamp.position.y=3.85;ob.add(lamp);
+  const cap=new THREE.Mesh(new THREE.ConeGeometry(.42,.7,4),brass);cap.position.y=4.35;ob.add(cap);
+  scene.add(ob);
+  const light=new THREE.PointLight(0x65dcd0,.8,11,2);light.position.set(x,3.8,z);scene.add(light);
+ }
+ // A monumental mining arch at the far end gives the horizon a memorable focal point.
+ const gate=new THREE.Group();gate.position.set(0,0,-30);
+ const stone=new THREE.MeshStandardMaterial({color:0x34484a,roughness:.8,metalness:.12});
+ for(const x of [-5.2,5.2]){
+  const pillar=new THREE.Mesh(new THREE.BoxGeometry(1.15,8.5,1.25),stone);pillar.position.set(x,4.25,0);pillar.castShadow=true;pillar.receiveShadow=true;gate.add(pillar);
+  const foot=new THREE.Mesh(new THREE.BoxGeometry(2,1,1.8),brass);foot.position.set(x,.5,0);gate.add(foot);
+ }
+ const lintel=new THREE.Mesh(new THREE.BoxGeometry(12,1.25,1.5),stone);lintel.position.y=8.2;lintel.castShadow=true;gate.add(lintel);
+ const crest=new THREE.Mesh(new THREE.TorusGeometry(1.35,.13,10,48),brass);crest.position.set(0,7.2,.85);gate.add(crest);
+ const crestCoin=new THREE.Mesh(new THREE.CylinderGeometry(.85,.85,.18,32),new THREE.MeshStandardMaterial({color:0xffd45c,roughness:.2,metalness:.9,emissive:0x9b5b00,emissiveIntensity:.35}));crestCoin.rotation.x=Math.PI/2;crestCoin.position.set(0,7.2,.78);gate.add(crestCoin);
+ const rune=new THREE.Mesh(new THREE.TorusGeometry(2.15,.035,6,64),glow);rune.position.set(0,7.2,.7);gate.add(rune);scene.add(gate);
+ // Broken stone pavers make the approach trail feel intentional and tactile.
+ const paverMat=new THREE.MeshStandardMaterial({color:0x626b65,roughness:.95});
+ for(let i=0;i<44;i++){
+  const z=31-i*1.2,x=Math.sin(i*1.71)*1.8;
+  const p=new THREE.Mesh(new THREE.BoxGeometry(1.35+Math.random()*.6,.12,.7+Math.random()*.35),paverMat);
+  p.position.set(x,.07,z);p.rotation.y=(Math.random()-.5)*.28;p.rotation.x=(Math.random()-.5)*.035;p.receiveShadow=true;scene.add(p);
+ }
+ // Fine drifting points catch the light and add depth in the foreground.
+ const moteN=520,positions=new Float32Array(moteN*3),colors=new Float32Array(moteN*3);
+ const cA=new THREE.Color(0xffdc8a),cB=new THREE.Color(0x8ae9dc);
+ for(let i=0;i<moteN;i++){
+  const a=Math.random()*Math.PI*2,r=8+Math.random()*46;
+  positions[i*3]=Math.cos(a)*r;positions[i*3+1]=.6+Math.random()*15;positions[i*3+2]=Math.sin(a)*r;
+  const c=Math.random()<.72?cA:cB;colors[i*3]=c.r;colors[i*3+1]=c.g;colors[i*3+2]=c.b;
+ }
+ const motesGeo=new THREE.BufferGeometry();motesGeo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));motesGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ const motes=new THREE.Points(motesGeo,new THREE.PointsMaterial({size:.09,vertexColors:true,transparent:true,opacity:.62,depthWrite:false,sizeAttenuation:true}));motes.name='ambientMotes';scene.add(motes);
+ // Distinctive luminous inlays reinforce the brass-and-teal art direction at the excavation rim.
+ const runeMat=new THREE.MeshStandardMaterial({color:0x64d9cc,roughness:.3,metalness:.55,emissive:0x1b9488,emissiveIntensity:.7});
+ for(let i=0;i<32;i++){
+  const a=i/32*Math.PI*2,r=21.4;
+  const mark=new THREE.Mesh(new THREE.BoxGeometry(.65,.045,.11),i%4===0?brass:runeMat);
+  mark.position.set(Math.cos(a)*r,.11,Math.sin(a)*r);mark.rotation.y=-a;scene.add(mark);
+ }
+}
+
 function buildSkyObjects(){
  const n=700,arr=new Float32Array(n*3);for(let i=0;i<n;i++){const u=Math.random()*Math.PI*2,v=Math.random()*.95+.05,r=250;arr[i*3]=Math.cos(u)*Math.sqrt(1-v*v)*r;arr[i*3+1]=v*r;arr[i*3+2]=Math.sin(u)*Math.sqrt(1-v*v)*r}
  const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));
@@ -548,9 +642,9 @@ function setupInput(){
 // ---------- init + main loop ----------
 function init(){
  daySky=new THREE.Color(biomes[0].sky);nightCol=new THREE.Color(0x070c22);duskCol=new THREE.Color(0xff8f4a);tmpC=new THREE.Color();
- scene=new THREE.Scene();scene.background=new THREE.Color(daySky);scene.fog=new THREE.Fog(daySky.getHex(),52,148);
+ scene=new THREE.Scene();scene.background=new THREE.Color(daySky);scene.fog=new THREE.Fog(daySky.getHex(),64,188);
  camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,320);camera.rotation.order='YXZ';
- renderer=new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+ renderer=new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
  canvas=renderer.domElement;document.body.prepend(canvas);clock=new THREE.Clock();
  hemi=new THREE.HemisphereLight(0xc9e7ff,0x55402b,1.65);scene.add(hemi);
  const fill=new THREE.DirectionalLight(0x83b6c8,.72);fill.position.set(24,18,-22);scene.add(fill);
@@ -558,7 +652,7 @@ function init(){
  sun=new THREE.DirectionalLight(0xffe3ad,3.0);sun.position.set(-18,35,12);sun.castShadow=true;sun.shadow.camera.left=-45;sun.shadow.camera.right=45;sun.shadow.camera.top=45;sun.shadow.camera.bottom=-45;sun.shadow.camera.far=200;scene.add(sun);
  moon=new THREE.DirectionalLight(0x7f9bff,0);scene.add(moon);
  pileLight=new THREE.PointLight(0xffc94a,0,75,1.2);pileLight.position.set(0,BASE_TOP+9,0);scene.add(pileLight);
- buildGround();buildPile();buildScenery();buildSkyObjects();buildProps();buildRigs();buildParticles();
+ buildGround();buildPile();buildScenery();buildVisualOverhaul();buildSkyObjects();buildProps();buildRigs();buildParticles();
  loadSettings();applyQuality();
  const loaded=loadGame();
  applyBiome();updatePileShape(true);syncDrones();refreshProps();updateToolVisuals();
