@@ -28,11 +28,11 @@ try:
         metrics['canvasInfo']=page.locator('canvas').first.evaluate('c=>({width:c.width,height:c.height,clientWidth:c.clientWidth,clientHeight:c.clientHeight,webgl2:!!c.getContext("webgl2"),webgl:!!c.getContext("webgl")})')
         if metrics['startDisabled']: raise RuntimeError('Start button disabled: engine initialization failed')
         if not metrics['canvasInfo']['webgl2'] and not metrics['canvasInfo']['webgl']: raise RuntimeError('No WebGL/WebGL2 context on the renderer canvas')
-        page.screenshot(path=str(OUT/'real-webgl-startup.png'),full_page=True)
+        page.screenshot(path=str(OUT/'real-webgl-startup.png'),full_page=False)
         page.locator('#start').click()
         page.wait_for_timeout(1200)
         metrics['menuHiddenAfterStart']=not page.locator('#menu').is_visible()
-        page.screenshot(path=str(OUT/'real-webgl-gameplay.png'),full_page=True)
+        page.screenshot(path=str(OUT/'real-webgl-gameplay.png'),full_page=False)
         metrics['rafFps']=page.evaluate("async()=>{let n=0;let start=performance.now();return await new Promise(resolve=>{function f(t){n++;if(t-start>=2500)resolve({frames:n,elapsedMs:Math.round(t-start),fps:Math.round(n*1000/(t-start)*10)/10});else requestAnimationFrame(f)}requestAnimationFrame(f)})}")
         metrics['pageErrors']=errors
         metrics['consoleErrors']=console_errors
