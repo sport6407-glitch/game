@@ -10,7 +10,7 @@
 #help{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff25;border-radius:12px;padding:10px 16px;text-align:center;font-size:13px;max-width:60vw}
 #lookHint{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff25;border-radius:10px;padding:6px 14px;text-align:center;font-size:13px;max-width:90vw;color:#ffe9a6}
 kbd{background:#fff;color:#111;border-radius:4px;padding:2px 6px;font-weight:800;text-shadow:none}
-#hudSettings{position:fixed;right:16px;top:16px;z-index:5;pointer-events:auto;background:#101827e8;color:#fff;border:1px solid #ffffff30;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}
+#hudSettings{position:fixed;right:16px;top:16px;z-index:10000!important;pointer-events:auto;background:#101827e8;color:#fff;border:1px solid #ffffff30;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}
 #crosshair{position:fixed;left:50%;top:50%;width:8px;height:8px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 6px #000}
 #minimap{position:fixed;right:16px;bottom:16px;width:150px;height:150px;border-radius:50%;border:2px solid #ffffff35;box-shadow:0 4px 18px #0008}
 #prompt{position:fixed;left:50%;top:57%;transform:translateX(-50%);background:#101827d9;border:1px solid #ffffff30;border-radius:10px;padding:6px 14px;font-size:14px}
@@ -134,7 +134,7 @@ h1{letter-spacing:-1.2px;text-shadow:0 6px 28px #0005}h2{letter-spacing:-.4px}.t
 
 
 /* Keep the WebGL surface behind clickable HUD controls while leaving the minimap in normal UI flow. */
-#worldCanvas{position:fixed;inset:0;z-index:0}
+#worldCanvas{position:fixed;inset:0;z-index:0;pointer-events:auto} #hudSettings{isolation:isolate}
 #hud{z-index:2}
 </style></head><body>
 <button id="hudSettings">⚙ Settings</button>
