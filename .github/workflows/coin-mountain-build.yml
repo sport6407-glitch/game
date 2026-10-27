@@ -69,3 +69,5 @@ jobs:
             Coin_Mountain_GitHub_Upload/artifacts/
           if-no-files-found: warn
           retention-days: 14
+
+# Graphics-overhaul validation includes production WebGL screenshots and live gameplay checks.
