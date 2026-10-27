@@ -232,7 +232,7 @@ function buildVisualOverhaul(){
   const c=Math.random()<.72?cA:cB;colors[i*3]=c.r;colors[i*3+1]=c.g;colors[i*3+2]=c.b;
  }
  const motesGeo=new THREE.BufferGeometry();motesGeo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));motesGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
- const motes=new THREE.Points(motesGeo,new THREE.PointsMaterial({size:.09,vertexColors:true,transparent:true,opacity:.62,depthWrite:false,sizeAttenuation:true}));motes.name='ambientMotes';scene.add(motes);
+ const motes=new THREE.Points(motesGeo,new THREE.PointsMaterial({size:.095,vertexColors:true,transparent:true,opacity:.72,depthWrite:false,sizeAttenuation:true}));motes.name='ambientMotes';scene.add(motes);
  // Distinctive luminous inlays reinforce the brass-and-teal art direction at the excavation rim.
  const runeMat=new THREE.MeshStandardMaterial({color:0x64d9cc,roughness:.3,metalness:.55,emissive:0x1b9488,emissiveIntensity:.7});
  for(let i=0;i<32;i++){
@@ -240,6 +240,70 @@ function buildVisualOverhaul(){
   const mark=new THREE.Mesh(new THREE.BoxGeometry(.65,.045,.11),i%4===0?brass:runeMat);
   mark.position.set(Math.cos(a)*r,.11,Math.sin(a)*r);mark.rotation.y=-a;scene.add(mark);
  }
+
+ // --- AAA art pass: textured mineral surfaces, layered alpine silhouettes and sun shafts ---
+ // A single reusable procedural texture adds readable surface breakup without external assets.
+ const weathering=noiseTexture('#777b76',9800,2.4);
+ weathering.anisotropy=4;
+ slate.map=weathering;slate.bumpMap=weathering;slate.bumpScale=.16;slate.needsUpdate=true;
+ slateLit.map=weathering;slateLit.bumpMap=weathering;slateLit.bumpScale=.11;slateLit.needsUpdate=true;
+ paverMat.map=noiseTexture('#92958b',6800,1.25);paverMat.bumpMap=paverMat.map;paverMat.bumpScale=.09;paverMat.needsUpdate=true;
+ stone.map=weathering;stone.bumpMap=weathering;stone.bumpScale=.13;stone.needsUpdate=true;
+ // Three handcrafted, faceted mountain ridgelines create strong atmospheric depth beyond the playable arena.
+ const ridgeLayers=[
+  {z:-92,base:1,amp:32,colorA:new THREE.Color(0x334e59),colorB:new THREE.Color(0x76919a),seed:1.7},
+  {z:-128,base:3,amp:43,colorA:new THREE.Color(0x243d4a),colorB:new THREE.Color(0x536f7b),seed:4.1},
+  {z:-166,base:5,amp:53,colorA:new THREE.Color(0x1a303d),colorB:new THREE.Color(0x3b5362),seed:7.3}
+ ];
+ for(let li=0;li<ridgeLayers.length;li++){
+  const layer=ridgeLayers[li],segments=128,verts=[],cols=[],indices=[];
+  for(let x=0;x<=segments;x++){
+   const u=x/segments,wx=(u-.5)*440;
+   const broad=Math.pow(Math.max(0,Math.sin(u*Math.PI)),.55);
+   const wave=Math.abs(Math.sin(u*18+layer.seed))*.52+Math.abs(Math.sin(u*39+layer.seed*2))*.3+Math.abs(Math.sin(u*7+layer.seed*.7))*.55;
+   const peak=layer.base+broad*layer.amp*(.28+wave);
+   verts.push(wx,peak,layer.z+(Math.sin(u*13+layer.seed)*3));
+   verts.push(wx,-9,layer.z);
+   const shade=.68+.32*(.5+.5*Math.sin(u*23+layer.seed));
+   const c=layer.colorA.clone().lerp(layer.colorB,shade);
+   cols.push(c.r,c.g,c.b,c.r*.62,c.g*.7,c.b*.76);
+   if(x<segments){const a=x*2;indices.push(a,a+1,a+2,a+1,a+3,a+2)}
+  }
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));geo.setIndex(indices);geo.computeVertexNormals();
+  const ridge=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:1,metalness:0,flatShading:true,side:THREE.DoubleSide,fog:true}));
+  ridge.name='distantAlpineRidge';ridge.frustumCulled=false;scene.add(ridge);
+ }
+ // A broken outer escarpment gives the arena a less circular, more geological silhouette.
+ const cliffGeo=new THREE.IcosahedronGeometry(1,1),cliffMat=new THREE.MeshStandardMaterial({color:0x40555a,map:weathering,bumpMap:weathering,bumpScale:.2,roughness:.98,flatShading:true});
+ const escarpment=new THREE.InstancedMesh(cliffGeo,cliffMat,156);escarpment.frustumCulled=false;
+ for(let i=0;i<156;i++){
+  const a=i/156*Math.PI*2+(Math.random()-.5)*.08,r=43+Math.random()*17;
+  const sx=1.4+Math.random()*4.8,sy=2+Math.random()*8.5,sz=1.5+Math.random()*5.5;
+  dummy.position.set(Math.cos(a)*r,sy*.34-1.2,Math.sin(a)*r-7);
+  dummy.rotation.set((Math.random()-.5)*.4,Math.random()*Math.PI*2,(Math.random()-.5)*.32);
+  dummy.scale.set(sx,sy,sz);dummy.updateMatrix();escarpment.setMatrixAt(i,dummy.matrix);
+ }
+ escarpment.instanceMatrix.needsUpdate=true;escarpment.castShadow=true;escarpment.receiveShadow=true;scene.add(escarpment);
+ // Mineral seams catch the sun across the exposed rock: thin fractured ribbons, not flat decals.
+ const seamMat=new THREE.MeshStandardMaterial({color:0x7de2d4,roughness:.3,metalness:.48,emissive:0x187c75,emissiveIntensity:.5});
+ for(let i=0;i<18;i++){
+  const a=i/18*Math.PI*2,r=24.5+(i%4)*.55;
+  const seam=new THREE.Mesh(new THREE.TorusGeometry(.55+(i%3)*.18,.025,5,18,Math.PI*.8),i%3===0?brass:seamMat);
+  seam.position.set(Math.cos(a)*r,.32+(i%3)*.12,Math.sin(a)*r);seam.rotation.set(Math.PI/2+(Math.random()-.5)*.2,a,0);seam.scale.set(1.5,.7,1);scene.add(seam);
+ }
+ // Subtle volumetric-looking shafts frame the ancient gate and add cinematic depth without post-processing.
+ const shaftMat=new THREE.MeshBasicMaterial({color:0xffdca0,transparent:true,opacity:.055,depthWrite:false,side:THREE.DoubleSide});
+ for(let i=0;i<5;i++){
+  const shaft=new THREE.Mesh(new THREE.ConeGeometry(2.1+i*.24,25,7,1,true),shaftMat);
+  shaft.position.set(-8+i*4.1,14,-38-i*.7);shaft.rotation.z=Math.PI;shaft.rotation.x=(i-2)*.045;shaft.renderOrder=1;scene.add(shaft);
+ }
+ // Layered halo rings make the distant gate read as a deliberate destination at a glance.
+ const haloMat=new THREE.MeshBasicMaterial({color:0xffd36a,transparent:true,opacity:.22,depthWrite:false});
+ for(let i=0;i<3;i++){
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(2.5+i*.42,.035,6,72),haloMat);
+  halo.position.set(0,7.2,-29.1-i*.08);halo.rotation.y=i*.08;gate.add(halo);
+ }
+
 }
 
 function buildSkyObjects(){
@@ -716,6 +780,7 @@ function animate(){
  // ---- visuals ----
  updateSky(dt);
  const tnow=performance.now()*.001;
+ const ambientMotes=scene.getObjectByName('ambientMotes');if(ambientMotes){ambientMotes.rotation.y+=dt*.012;ambientMotes.position.y=Math.sin(tnow*.22)*.18;}
  drones.forEach((d,i)=>{const ang=tnow*(.35+(i%3)*.08)*(i%2?1:-1)+d.phase,rr=10.5+(i%4)*1.5;d.grp.position.set(Math.cos(ang)*rr,BASE_TOP+4.5+(i%5)*1.2+Math.sin(tnow*2+d.phase)*.3,Math.sin(ang)*rr);d.rotor.rotation.y=tnow*40;d.grp.rotation.y=-ang});
  if(props.conv.visible)props.convCoins.forEach((c,i)=>{c.position.x=12+((tnow*1.6+i*.8)%9.6)});
  if(props.loader.visible)props.loaderArm.rotation.z=Math.sin(tnow*1.1)*.35;
